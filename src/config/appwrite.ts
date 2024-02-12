@@ -1,16 +1,18 @@
-import { Client, Account, Databases, Storage } from "appwrite";
+import { env } from "@/env";
+import { Client, Account, Databases, Storage, ID } from "appwrite";
 import type {
   Client as IClient,
   Account as IAccount,
   Databases as IDatabases,
   Storage as IStorage,
+  Models,
 } from "appwrite";
 
 class AppWrite {
-  private dbClient: IClient | undefined;
-  private account: IAccount | undefined;
-  private database: IDatabases | undefined;
-  private storage: IStorage | undefined;
+  private dbClient: IClient;
+  private account: IAccount;
+  private database: IDatabases;
+  private storage: IStorage;
 
   constructor(apiUrl: string, apiKey: string) {
     if (!apiUrl || !apiKey) {
@@ -18,44 +20,84 @@ class AppWrite {
     }
 
     this.dbClient = new Client().setEndpoint(apiUrl).setProject(apiKey);
-  }
-
-  public initalizeAccount() {
-    if (!this.dbClient) {
-      throw new Error("Client is not initialized");
-    }
     this.account = new Account(this.dbClient);
-  }
-
-  public initalizeDatabase() {
-    if (!this.dbClient) {
-      throw new Error("Client is not initialized");
-    }
     this.database = new Databases(this.dbClient);
-  }
-
-  public initalizeStorage() {
-    if (!this.dbClient) {
-      throw new Error("Client is not initialized");
-    }
     this.storage = new Storage(this.dbClient);
   }
 
-  public getClient() {
+  private getClient() {
     return this.dbClient;
   }
 
-  public getAccount() {
+  private getAccount() {
     return this.account;
   }
 
-  public getDatabase() {
+  private getDatabase() {
     return this.database;
   }
 
-  public getStorage() {
+  private getStorage() {
     return this.storage;
+  }
+
+  private getUniqueId() {
+    return ID.unique();
+  }
+
+  public async GetSignedInUser() {
+    try {
+      const user = await this.getAccount().get();
+
+      return user ? user : null;
+    } catch (error) {
+      return null
+    }
+  }
+
+  public async verifyUser(userId: string, secret: string) {
+    const token = await this.getAccount().updateVerification(userId, secret);
+    return !!token.$id;
+  }
+
+  public async SignInUser(
+    email: string,
+    password: string,
+    onError: (message: string) => void
+  ) {
+    try {
+      await this.getAccount().createEmailSession(
+        email as string,
+        password as string
+      );
+
+      return (await this.GetSignedInUser());
+    } catch (error: any) {
+      onError(error.message);
+      return null;
+    }
+  }
+
+  public async SignUpUser(
+    email: string,
+    password: string,
+    onError: (message: string) => void
+  ) {
+    try {
+      const user = await this.getAccount().create(
+        this.getUniqueId(),
+        email as string,
+        password as string
+      );
+
+      return user;
+    } catch (error: any) {
+      onError(error.message);
+      return null;
+    }
   }
 }
 
-export default AppWrite;
+const AppWriteService = new AppWrite(env.API_URL, env.API_KEY);
+export default Object.freeze(AppWriteService) as AppWrite;
+export type AuthUser = Models.User<Models.Preferences> | null;

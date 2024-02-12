@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
+
 import { cn } from "@/lib/utils";
+import { RootProvider } from "@/provider";
+
 import "../styles/globals.css";
 
 const font = Poppins({
@@ -9,8 +12,8 @@ const font = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Digital Dreams",
-  description: "Digital Dreams",
+  title: "VisaWise",
+  description: "VisaWise",
 };
 
 export default function RootLayout({
@@ -26,6 +29,7 @@ export default function RootLayout({
           font.className
         )}
       >
+        <RootProvider />
         {children}
       </body>
     </html>

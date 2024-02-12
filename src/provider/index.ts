@@ -1,1 +1,1 @@
-export * from './AppInit';
+export * from "./RootProvider";
