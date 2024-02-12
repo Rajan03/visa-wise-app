@@ -77,15 +77,15 @@ function SignInForm({ onSubmit }: { onSubmit: () => void }) {
     const email = emailRef.current?.value as string;
     const password = passwordRef.current?.value as string;
 
-    const user = await signUp(
-      email as string,
-      password as string,
-      (message) => {
+    const user = await signUp({
+      email,
+      password,
+      onError: (message) => {
         showToast(ToastState.ERROR, message);
         setLoading(false);
         setBtnTxt("Create Account");
-      }
-    );
+      },
+    });
     if (!user) return;
 
     const signedIn = await signInUser(email, password);
