@@ -45,13 +45,17 @@ class AppWrite {
     return ID.unique();
   }
 
-  public async GetSignedInUser() {
+  public async getSignedInSession(id?: string) {
+    return (await this.getAccount().getSession(id ? id : "current"));
+  }
+
+  public async getSignedInUser() {
     try {
       const user = await this.getAccount().get();
 
       return user ? user : null;
     } catch (error) {
-      return null
+      return null;
     }
   }
 
@@ -66,12 +70,12 @@ class AppWrite {
     onError: (message: string) => void
   ) {
     try {
-      await this.getAccount().createEmailSession(
+      const session = await this.getAccount().createEmailSession(
         email as string,
         password as string
       );
 
-      return (await this.GetSignedInUser());
+      return session;
     } catch (error: any) {
       onError(error.message);
       return null;
@@ -100,4 +104,7 @@ class AppWrite {
 
 const AppWriteService = new AppWrite(env.API_URL, env.API_KEY);
 export default Object.freeze(AppWriteService) as AppWrite;
+
+// Types
 export type AuthUser = Models.User<Models.Preferences> | null;
+export type Session = Models.Session;

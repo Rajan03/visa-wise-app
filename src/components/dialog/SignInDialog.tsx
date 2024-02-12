@@ -1,5 +1,5 @@
 "use client";
-import { Label } from "@/components";
+import { useRef, useState } from "react";
 import {
   Button,
   Dialog,
@@ -8,20 +8,39 @@ import {
   DialogHeader,
   DialogTitle,
   Input,
+  Label,
 } from "@/components";
-import AppWriteService from "@/config/appwrite";
-import { useSignInModal, useShowToast, ToastState } from "@/hooks";
-import { useAuthUser } from "@/hooks/use-auth-user";
-import { CallState } from "@/types";
-import { useRef, useState } from "react";
+import { useSignInModal, useShowToast, ToastState, useAuthUser } from "@/hooks";
 
 export function SignInDialog() {
   const { isOpen, toggle } = useSignInModal();
-  const { setUser } = useAuthUser();
+
+  // If modal is not open return null
+  if (!isOpen) return null;
+
+  return (
+    <Dialog open={isOpen} onOpenChange={toggle}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Get Started with VisaWise 🪄</DialogTitle>
+          <DialogDescription>
+            Get started with VisaWise by signing in directly with your email and
+            password. We&apos;ll send you a link to verify your sign in.
+          </DialogDescription>
+        </DialogHeader>
+
+        <SignInForm onSubmit={() => toggle(false)} />
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function SignInForm({ onSubmit }: { onSubmit : () => void}) {
   const showToast = useShowToast();
+  const {login} = useAuthUser();
 
   // Form States
-  const [state, setState] = useState(CallState.Idle);
+  const [loading, setLoading] = useState(false);
 
   // Form Refs
   const emailRef = useRef<HTMLInputElement>(null);
@@ -40,11 +59,7 @@ export function SignInDialog() {
       !password ||
       password.length < 6
     ) {
-      toast({
-        title: "Error",
-        description: "Invalid email or password",
-        variant: "destructive",
-      });
+      showToast(ToastState.ERROR, "Invalid Credentials!");
       return false;
     }
     return true;
@@ -55,58 +70,41 @@ export function SignInDialog() {
     e.preventDefault();
     if (!isValidForm()) return;
 
-    setState(CallState.Loading);
+    setLoading(true);
     const email = emailRef.current?.value;
     const password = passwordRef.current?.value;
 
-    const user = await AppWriteService.SignInUser(
+    
+    const session = await login(
       email as string,
       password as string,
       (message) => showToast(ToastState.ERROR, message)
     );
 
-    if (user) {
-      setUser(user);
-      toggle(false);
-    }
-    setState(CallState.Idle);
+    if (session) onSubmit();
+    setLoading(false);
   };
 
-  // If modal is not open return null
-  if (!isOpen) return null;
-
   return (
-    <Dialog open={isOpen} onOpenChange={toggle}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Get Started with VisaWise 🪄</DialogTitle>
-          <DialogDescription>
-            Get started with VisaWise by signing in directly with your email and
-            password. We&apos;ll send you a link to verify your sign in.
-          </DialogDescription>
-        </DialogHeader>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="email">Email</Label>
+        <Input required type="email" placeholder="Email" ref={emailRef} />
+      </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="email">Email</Label>
-            <Input required type="email" placeholder="Email" ref={emailRef} />
-          </div>
+      <div>
+        <Label htmlFor="password">Password</Label>
+        <Input
+          required
+          type="password"
+          placeholder="Password"
+          ref={passwordRef}
+        />
+      </div>
 
-          <div>
-            <Label htmlFor="password">Password</Label>
-            <Input
-              required
-              type="password"
-              placeholder="Password"
-              ref={passwordRef}
-            />
-          </div>
-
-          <Button type="submit" disabled={state === CallState.Loading}>
-            {state === CallState.Loading ? "Signing In..." : "Sign In"}
-          </Button>
-        </form>
-      </DialogContent>
-    </Dialog>
+      <Button type="submit" disabled={loading}>
+        {loading ? "Signing In..." : "Sign In"}
+      </Button>
+    </form>
   );
 }

@@ -1,15 +1,13 @@
-import AppWriteService from "@/config/appwrite";
 import { Toaster } from "@/components";
 import { AppModals } from "./Modals";
-import { PopulateUser } from "./PopulateSignedInUser";
+import { AuthProvider } from "./AuthProvider";
 
-export async function RootProvider() {
-    const user = await AppWriteService.GetSignedInUser();
+export async function RootProvider({children}: React.PropsWithChildren) {
   return (
-    <>
-      <PopulateUser user={user} />
+    <AuthProvider>
+      {children}
       <AppModals />
       <Toaster />
-    </>
+    </AuthProvider>
   );
 }

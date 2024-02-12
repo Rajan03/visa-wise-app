@@ -5,8 +5,7 @@ import { useParams } from "next/navigation";
 
 import { Each, Logo } from "@/components";
 import { INavLink } from "@/types";
-import { navOptions as options } from "@/utils";
-import { cn } from "@/lib/utils";
+import { navOptions as options, cn } from "@/lib";
 
 export function AppNavigation() {
   return (

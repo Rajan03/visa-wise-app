@@ -29,8 +29,7 @@ export default function RootLayout({
           font.className
         )}
       >
-        <RootProvider />
-        {children}
+        <RootProvider>{children}</RootProvider>
       </body>
     </html>
   );
