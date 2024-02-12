@@ -35,9 +35,9 @@ export function SignInDialog() {
   );
 }
 
-function SignInForm({ onSubmit }: { onSubmit : () => void}) {
+function SignInForm({ onSubmit }: { onSubmit: () => void }) {
   const showToast = useShowToast();
-  const {login} = useAuthUser();
+  const { login } = useAuthUser();
 
   // Form States
   const [loading, setLoading] = useState(false);
@@ -71,15 +71,14 @@ function SignInForm({ onSubmit }: { onSubmit : () => void}) {
     if (!isValidForm()) return;
 
     setLoading(true);
-    const email = emailRef.current?.value;
-    const password = passwordRef.current?.value;
+    const email = emailRef.current?.value as string;
+    const password = passwordRef.current?.value as string;
 
-    
-    const session = await login(
-      email as string,
-      password as string,
-      (message) => showToast(ToastState.ERROR, message)
-    );
+    const session = await login({
+      email,
+      password,
+      onError: (message) => showToast(ToastState.ERROR, message),
+    });
 
     if (session) onSubmit();
     setLoading(false);

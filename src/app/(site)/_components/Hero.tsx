@@ -8,7 +8,7 @@ import Link from "next/link";
 export function Hero() {
   const { open: openSignUp } = useSignUpModal();
   const { open: openSignIn } = useSignInModal();
-  const { session } = useAuthUser();
+  const { user } = useAuthUser();
 
   return (
     <div className="max-w-3xl mx-auto space-y-8 flex flex-col justify-center items-center">
@@ -20,9 +20,9 @@ export function Hero() {
         VisaWise is the platform that streamlines and simplifies <br />
         the visa application process for individuals and businesses.
       </h3>
-      {session?.current ? (
+      {user ? (
         <Button asChild>
-          <Link href={session.userId}>
+          <Link href={user.id}>
             Go to VisaWise
             <ArrowRightIcon className="h-4 w-4 ml-2" />
           </Link>

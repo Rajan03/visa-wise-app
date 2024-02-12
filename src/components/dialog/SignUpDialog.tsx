@@ -10,9 +10,7 @@ import {
   Input,
   Label,
 } from "@/components";
-import AppWrite from "@/config/appwrite";
 import { useShowToast, useSignUpModal, ToastState, useAuthUser } from "@/hooks";
-import { CallState } from "@/types";
 
 export function SignUpDialog() {
   const { isOpen, toggle } = useSignUpModal();
@@ -39,7 +37,7 @@ export function SignUpDialog() {
 
 function SignInForm({ onSubmit }: { onSubmit: () => void }) {
   const showToast = useShowToast();
-  const {signUp, login} = useAuthUser();
+  const { signUp, login } = useAuthUser();
 
   // Form States
   const [loading, setLoading] = useState(false);
@@ -58,16 +56,14 @@ function SignInForm({ onSubmit }: { onSubmit: () => void }) {
       !email.includes("@") ||
       !email.includes(".") ||
       email.length < 5 ||
-      email.length > 320
+      email.length > 320 ||
+      !password ||
+      password.length < 6
     ) {
-      showToast(ToastState.ERROR, "Invalid email addess");
+      showToast(ToastState.ERROR, "Invalid Creadentials");
       return false;
     }
 
-    if (!password || password.length < 6) {
-      showToast(ToastState.ERROR, "Invalid password");
-      return false;
-    }
     return true;
   };
 
@@ -104,9 +100,11 @@ function SignInForm({ onSubmit }: { onSubmit: () => void }) {
   const signInUser = async (email: string, password: string) => {
     setBtnTxt("Signing in...");
 
-    const session = await login(email, password, (message) =>
-      showToast(ToastState.ERROR, message)
-    );
+    const session = await login({
+      email,
+      password,
+      onError: (message) => showToast(ToastState.ERROR, message),
+    });
 
     return session;
   };
