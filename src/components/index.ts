@@ -12,4 +12,4 @@ export * from "./dialog/SignUpDialog";
 
 export * from './MapEach';
 export * from "./Logo";
-export * from './AppNavigation'
+export * from './AppNavigation';

@@ -16,25 +16,23 @@ const firebaseConfig = {
 };
 
 class FirebaseClient {
-  private static instance: FirebaseClient;
-  private app: FirebaseApp;
+  private app: FirebaseApp | undefined;
   private firestore: Firestore;
   private fireAuth: Auth;
   private fireStorage: FirebaseStorage;
 
   private constructor() {
-    this.app = initializeApp(firebaseConfig);
-    this.firestore = getFirestore();
-    this.fireAuth = getAuth();
-    this.fireStorage = getStorage();
-  }
-
-  public static getInstance(): FirebaseClient {
-    if (!FirebaseClient.instance) {
-      FirebaseClient.instance = new FirebaseClient();
+    if (initializeApp.length) {
+      this.firestore = getFirestore(this.app as FirebaseApp);
+      this.fireAuth = getAuth(this.app as FirebaseApp);
+      this.fireStorage = getStorage(this.app as FirebaseApp);
+      return;
     }
 
-    return FirebaseClient.instance;
+    this.app = initializeApp(firebaseConfig);
+    this.firestore = getFirestore(this.app);
+    this.fireAuth = getAuth(this.app);
+    this.fireStorage = getStorage(this.app);
   }
 
   public getFirestore(): Firestore {

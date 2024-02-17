@@ -25,7 +25,7 @@ export function AppNavigation() {
 
 function SidebarItem(props: INavLink) {
   const { subDomain } = useParams();
-  const isActive = window.location.pathname === `/${subDomain}${props.href}`;
+  const isActive = window?.location?.pathname === `/${subDomain}${props.href}`;
 
   const txtStyle = cn(
     isActive

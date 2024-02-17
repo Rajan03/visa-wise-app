@@ -7,6 +7,7 @@ import {
   PersonIcon,
 } from "@radix-ui/react-icons";
 
+export const APP_SUBSCRIPTION_COST = 100;
 export const navOptions = [
   {
     label: "Dashboard",

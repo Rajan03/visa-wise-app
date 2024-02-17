@@ -1,15 +1,8 @@
-"use client";
-
 import { Button } from "@/components";
-import { useSignUpModal, useSignInModal, useAuthUser } from "@/hooks";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 
 export function Hero() {
-  const { open: openSignUp } = useSignUpModal();
-  const { open: openSignIn } = useSignInModal();
-  const { user } = useAuthUser();
-
   return (
     <div className="max-w-3xl mx-auto space-y-8 flex flex-col justify-center items-center">
       <h1 className="text-3xl sm:text-5xl font-bold text-center">
@@ -20,24 +13,15 @@ export function Hero() {
         VisaWise is the platform that streamlines and simplifies <br />
         the visa application process for individuals and businesses.
       </h3>
-      {user ? (
+      <div className="flex gap-x-2">
         <Button asChild>
-          <Link href={user.id}>
-            Go to VisaWise
+          <Link href="/checkout">
+            <span>Get VisaWise</span>
             <ArrowRightIcon className="h-4 w-4 ml-2" />
           </Link>
         </Button>
-      ) : (
-        <div className="flex gap-x-2">
-          <Button onClick={openSignUp}>
-            Get VisaWise
-            <ArrowRightIcon className="h-4 w-4 ml-2" />
-          </Button>
-          <Button onClick={openSignIn} variant={"ghost"}>
-            Already have account ?
-          </Button>
-        </div>
-      )}
+        <Button variant={"ghost"}>Have a doubt ?</Button>
+      </div>
     </div>
   );
 }

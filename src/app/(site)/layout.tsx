@@ -1,12 +1,13 @@
 import { Navbar } from "./_components";
 
 const SiteLayout = ({ children }: { children: React.ReactNode }) => {
-  
   return (
-    <div className="h-full dark:bg-[#1F1F1F]">
+    <>
       <Navbar />
-      <main className="h-full pt-40">{children}</main>
-    </div>
+      <main className="relative top-20 min-h-[calc(100vh-5rem)] flex flex-col px-2">
+        {children}
+      </main>
+    </>
   );
 };
 
