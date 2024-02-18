@@ -1,7 +1,7 @@
 import { emailService } from "@/config/emailService";
 import { stripe } from "@/config/stripe";
 import { env } from "@/env";
-import { SessionServiceInstance, UserServiceInstance } from "@/services";
+import { UserServiceInstance } from "@/services/admin";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -29,26 +29,21 @@ export async function POST(req: NextRequest) {
     const session = event.data.object as any;
     const email = session.customer_details?.email as string;
     const name = session.customer_details?.name as string;
+    const organization = session.metadata.org as string;
 
     console.log("Session: ", session.id);
-    const subscription = await createSubscription(email, session.id);
-    if (!subscription) {
-      return new NextResponse("Subscription Failed", {
+    try {
+      await createUser(session.id, email, name, organization);
+
+      // TODO: Handle case where any of above actions fail to complete in webhook
+      return new NextResponse("Subscription Created", {
+        status: 200,
+      });
+    } catch (error: any) {
+      return new NextResponse(error.message, {
         status: 400,
       });
     }
-
-    const user = await createUser(email, name);
-    if (!user) {
-      return new NextResponse("User Creation Failed", {
-        status: 400,
-      });
-    }
-
-    // TODO: Handle case where any of above actions fail to complete
-    return new NextResponse("Subscription Created", {
-      status: 200,
-    });
   }
 
   return new NextResponse("Event not handled", {
@@ -56,42 +51,43 @@ export async function POST(req: NextRequest) {
   });
 }
 
-async function createSubscription(email: string, session: string) {
+async function createUser(
+  userId: string,
+  email: string,
+  name: string,
+  organization: string
+) {
+  const psw = UserServiceInstance.generateRandom(email);
+  const orgName = UserServiceInstance.generateRandom(organization);
+
   try {
-    await SessionServiceInstance.createSession(email, session, 1);
-    console.log("New Session Created ");
-
-    // TODO: Run a firebase function to send a welcome email and send admin a notification
-    return true;
+    // Create a new user in firebase auth
+    await UserServiceInstance.createUser(name, email, psw, "admin", userId, {
+      domain: orgName,
+    });
   } catch (error: any) {
-    console.log("Error: ", error.message);
-
+    console.log("Error creating user: ", error.message);
     return false;
   }
+
+  // TODO: Replace and run fxn to trigger email and send admin a notification
+  triggerEmail(email, psw);
+  return true;
 }
 
-async function createUser(email: string, name: string) {
+// Trigger email to user with login credentials
+async function triggerEmail(email: string, psw: string) {
   try {
-    const psw = UserServiceInstance.generatePassword(email);
-    // Create a new user in firebase auth
-    const user = await UserServiceInstance.createUser(name, email, psw);
-    console.log("New User: ", user.email);
-
     // Send email with login credentials
-    const emailSent = await emailService.sendLoginCredMail(email, {
+    await emailService.sendLoginCredMail(email, {
       username: email,
       password: psw,
     });
 
-    if (!emailSent) {
-      return false;
-    }
+    return true;
   } catch (error: any) {
-    console.log("Error: ", error.message);
+    console.log("Error in EMAIL: ", error.message);
 
     return false;
   }
-
-  // TODO: Run a firebase function to send a welcome email and send admin a notification
-  return true;
 }

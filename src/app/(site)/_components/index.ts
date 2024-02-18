@@ -1,3 +1,3 @@
 export * from './Navbar'
 export * from "./Hero";
-export * from "./VerifyStates";
+export * from "./AfterPayment";

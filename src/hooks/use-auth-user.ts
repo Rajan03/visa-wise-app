@@ -6,18 +6,11 @@ type loginProps = {
   onError: (message: string) => void;
 };
 
-type signUpProps = {
-  email: string;
-  password: string;
-  onError: (message: string) => void;
-};
-
 type AuthUserState = {
   user: any | null;
   setUser: (user: any | null) => void;
 
   login: (props: loginProps) => Promise<any | null>;
-  signUp: (props: signUpProps) => Promise<any | null>;
   logout: () => void;
 };
 
@@ -26,8 +19,5 @@ export const useAuthUser = create<AuthUserState>((set, get) => ({
   setUser: (authUser) => set({ user: authUser }),
 
   login: async ({ email, password, onError }) => {},
-
-  signUp: async ({ email, password, onError }) => {},
-
   logout: () => {},
 }));

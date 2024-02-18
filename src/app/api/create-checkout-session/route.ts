@@ -1,20 +1,20 @@
 import { NextResponse, NextRequest } from "next/server";
 import { stripe } from "@/config/stripe";
-import { SessionServiceInstance } from "@/services";
+import { UserServiceInstance } from "@/services/admin";
 
 export async function POST(req: NextRequest) {
-  const { amount, email } = (await req.json()) as any;
+  const { amount, email, org } = (await req.json()) as any;
 
-  if (!amount || !email) {
-    return new NextResponse("amount and email are required", {
+  if (!amount || !email || !org) {
+    return new NextResponse("Organization and Email are required", {
       status: 400,
     });
   }
 
   // Check if email already exists
   try {
-    const user = await SessionServiceInstance.getSessionByEmail(email);
-    if (user.size > 0) {
+    const user = await UserServiceInstance.getUserByEmail(email);
+    if (user && !!user.uid) {
       return new NextResponse("Email already exists", {
         status: 400,
       });
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       payment_method_types: ["card"],
       line_items: [transformedItem],
       mode: "payment",
-      metadata: { email },
+      metadata: { email, org },
       customer_email: email,
       success_url: `${req.headers.get(
         "referer"

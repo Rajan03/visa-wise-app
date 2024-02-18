@@ -18,6 +18,7 @@ export default function Checkout() {
   const showToast = useShowToast();
   const [loadingState, setLoadingState] = useState(LoadingState.Idle);
   const emailRef = React.useRef<HTMLInputElement>(null);
+  const orgRef = React.useRef<HTMLInputElement>(null);
 
   const isLoading =
     loadingState !== LoadingState.Error && loadingState !== LoadingState.Idle;
@@ -26,9 +27,10 @@ export default function Checkout() {
     e.preventDefault();
     const amount = APP_SUBSCRIPTION_COST;
     const email = emailRef.current?.value;
+    const org = orgRef.current?.value;
 
-    if (!email) {
-      showToast(ToastState.ERROR, "Email is required");
+    if (!email || !email.trim() || !org || !org.trim()) {
+      showToast(ToastState.ERROR, "Please enter a valid email and organization name");
       return;
     }
 
@@ -46,6 +48,7 @@ export default function Checkout() {
       const checkoutSession = await axios.post(ENPOINTS.checkoutSession, {
         amount,
         email,
+        org,
       });
 
       if (checkoutSession.status !== 200) {
@@ -63,7 +66,7 @@ export default function Checkout() {
       }
     } catch (error: any) {
       console.log(error.response);
-      
+
       showToast(ToastState.ERROR, error.response?.data || "Failed to checkout");
       setLoadingState(LoadingState.Error);
     }
@@ -76,29 +79,37 @@ export default function Checkout() {
         Checkout Page under maintenance 🚧
       </h1>
       <p className="text-base sm:text-lg text-center text-gray-500 mt-6 max-w-md">
-        We&apos;re working hard to bring you a seamless checkout experience. In the meantime, you can pay now and continue.
+        We&apos;re working hard to bring you a seamless checkout experience. In
+        the meantime, you can pay now and continue.
       </p>
 
       {/* Payment Form */}
-      <form onSubmit={onFormSubmit} className="flex flex-wrap gap-2 justify-center mt-6">
-        <div className="flex flex-col gap-y-0.5">
+      <form
+        onSubmit={onFormSubmit}
+        className="flex flex-col justify-center mt-6"
+      >
+        <div className="flex flex-wrap items-center gap-2 mb-3">
           <Input
             type="email"
             id="email"
             placeholder="Enter your email address"
-            className="w-full sm:w-80"
+            className="w-full sm:w-60"
             ref={emailRef}
           />
-          <p className="text-xs text-gray-500 text-center">
-            We will send the onboarding credentials to this email.
-          </p>
+
+          <Input
+            type="text"
+            id="organization"
+            placeholder="Enter your organization name"
+            className="w-full sm:w-60"
+            ref={orgRef}
+          />
         </div>
 
-        <Button
-          type="submit"
-          variant={"default"}
-          disabled={isLoading}
-        >
+        <p className="text-xs text-gray-500 text-start ml-0.5 mb-1">
+          Credentials will be used to create an account for you.
+        </p>
+        <Button type="submit" variant={"default"} disabled={isLoading}>
           {isLoading ? <LoadState state={loadingState} /> : "Pay Now"}
         </Button>
       </form>
@@ -109,7 +120,7 @@ export default function Checkout() {
 function LoadState({ state }: { state: LoadingState }) {
   return (
     <div className="flex items-center gap-x-2">
-      <span className="w-4 h-4 border-t-2 border-r-2 rounded-full border-white animate-spin" />
+      <span className="w-4 h-4 border-t-2 border-r-2 rounded-full border-foreground animate-spin" />
       <span>{state}</span>
     </div>
   );

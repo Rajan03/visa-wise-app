@@ -49,7 +49,7 @@ class EmailService {
   }
 }
 
-
+// Email Templates
 const emailTemplateForLoginCredentials = (data: LoginCredentials) => {
   return `
     <h1>Login Credentials</h1>

@@ -19,22 +19,13 @@ export function Navbar() {
       </div>
 
       <div className="md:ml-auto flex items-center gap-x-8">
-        <a
-          href="#features"
-          className="hidden md:block hover:underline"
-        >
+        <a href="/features" className="hidden md:block hover:underline">
           Features
         </a>
-        <a
-          href="#pricing"
-          className="hidden md:block hover:underline"
-        >
+        <a href="/pricing" className="hidden md:block hover:underline">
           Pricing
         </a>
-        <a
-          href="#contact"
-          className="hidden md:block hover:underline"
-        >
+        <a href="/contact" className="hidden md:block hover:underline">
           Contact
         </a>
       </div>

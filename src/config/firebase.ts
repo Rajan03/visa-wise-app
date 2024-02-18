@@ -1,5 +1,5 @@
 import { env } from "@/env";
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 
 import type { FirebaseApp } from "firebase/app";
 import { getAuth, type Auth } from "firebase/auth";
@@ -17,33 +17,56 @@ const firebaseConfig = {
 
 class FirebaseClient {
   private app: FirebaseApp | undefined;
-  private firestore: Firestore;
-  private fireAuth: Auth;
-  private fireStorage: FirebaseStorage;
+  private firestore: Firestore | undefined;
+  private fireAuth: Auth | undefined;
+  private fireStorage: FirebaseStorage | undefined;
 
-  private constructor() {
-    if (initializeApp.length) {
-      this.firestore = getFirestore(this.app as FirebaseApp);
-      this.fireAuth = getAuth(this.app as FirebaseApp);
-      this.fireStorage = getStorage(this.app as FirebaseApp);
-      return;
+  private getApp(): FirebaseApp {
+    const firebaseApps = getApps();
+    if (!firebaseApps.length) {
+      try {
+        this.app = initializeApp(firebaseConfig);
+      } catch (error) {
+        throw new Error(`Error initializing Firebase app: ${error}`);
+      }
     }
-
-    this.app = initializeApp(firebaseConfig);
-    this.firestore = getFirestore(this.app);
-    this.fireAuth = getAuth(this.app);
-    this.fireStorage = getStorage(this.app);
+    this.app = firebaseApps[0] || this.app;
+    return this.app as FirebaseApp;
   }
 
   public getFirestore(): Firestore {
+    if (!this.firestore) {
+      try {
+        const app = this.getApp();
+        this.firestore = getFirestore(app);
+      } catch (error) {
+        throw new Error(`Error getting Firestore instance: ${error}`);
+      }
+    }
     return this.firestore;
   }
 
   public getAuth(): Auth {
+    if (!this.fireAuth) {
+      try {
+        const app = this.getApp();
+        this.fireAuth = getAuth(app);
+      } catch (error) {
+        throw new Error(`Error getting Auth instance: ${error}`);
+      }
+    }
     return this.fireAuth;
   }
 
   public getStorage(): FirebaseStorage {
+    if (!this.fireStorage) {
+      try {
+        const app = this.getApp();
+        this.fireStorage = getStorage(app);
+      } catch (error) {
+        throw new Error(`Error getting Storage instance: ${error}`);
+      }
+    }
     return this.fireStorage;
   }
 }

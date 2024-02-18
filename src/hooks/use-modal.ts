@@ -7,10 +7,3 @@ export const useSignInModal = create<ModalState>((set) => ({
   close: () => set({ isOpen: false }),
   toggle: (state) => set({ isOpen: state }),
 }));
-
-export const useSignUpModal = create<ModalState>((set) => ({
-  isOpen: false,
-  open: () => set({ isOpen: true }),
-  close: () => set({ isOpen: false }),
-  toggle: (state) => set({ isOpen: state }),
-}));
