@@ -1,16 +1,25 @@
-import { apps as firebaseApps } from "firebase-admin";
-import { App, initializeApp } from "firebase-admin/app";
-import { getFirestore, type Firestore } from "firebase-admin/firestore";
-import { getAuth, type Auth } from "firebase-admin/auth";
-import { getStorage, type Storage } from "firebase-admin/storage";
-import { converter } from "./firebase.helper";
+import {apps as firebaseApps} from "firebase-admin";
+import {App, initializeApp} from "firebase-admin/app";
+import {getFirestore, type Firestore} from "firebase-admin/firestore";
+import {getAuth, type Auth} from "firebase-admin/auth";
+import {getStorage, type Storage} from "firebase-admin/storage";
 
+/**
+ * FirebaseAdmin class to handle Firebase Admin SDK
+ * @class FirebaseAdmin
+ * @public
+ * @exports FirebaseAdmin
+ */
 export class FirebaseAdmin {
   private app: App | undefined;
   private firestore: Firestore | undefined;
   private fireAuth: Auth | undefined;
   private fireStorage: Storage | undefined;
 
+  /**
+   * Get Firebase Admin app instance
+   * @return {App} Firebase Admin app instance
+   */
   private getApp(): App {
     if (!firebaseApps.length) {
       try {
@@ -23,6 +32,10 @@ export class FirebaseAdmin {
     return this.app as App;
   }
 
+  /**
+   * Get Firestore instance
+   * @return {Firestore} Firestore instance
+   */
   public getFirestore(): Firestore {
     if (!this.firestore) {
       try {
@@ -35,6 +48,10 @@ export class FirebaseAdmin {
     return this.firestore;
   }
 
+  /**
+   * Get Auth instance
+   * @return {Auth} Auth instance
+   */
   public getAuth(): Auth {
     if (!this.fireAuth) {
       try {
@@ -47,6 +64,10 @@ export class FirebaseAdmin {
     return this.fireAuth;
   }
 
+  /**
+   * Get Storage instance
+   * @return {Storage} Storage instance
+   */
   public getStorage(): Storage {
     if (!this.fireStorage) {
       try {
@@ -57,13 +78,5 @@ export class FirebaseAdmin {
       }
     }
     return this.fireStorage;
-  }
-
-  public getCollection<T>(collection: string) {
-    return this.getFirestore().collection(collection).withConverter<T>(converter<T>());
-  }
-
-  public getDocument<T>(collection: string, document: string) {
-    return this.getCollection<T>(collection).doc(document);
   }
 }

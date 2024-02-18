@@ -13,12 +13,23 @@ class AuthenticationService {
   async generateIdToken(uid: string) {
     try {
       const idToken = await this.firebaseAuth.createCustomToken(uid);
-      const verifiedIdToken = await this.firebaseAuth.verifyIdToken(idToken);
-      return verifiedIdToken;
+      return idToken;
     } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  // Verifies id token for user
+  async verifyIdToken(token: string) {
+    try {
+      const decoded = await this.firebaseAuth.verifyIdToken(token);
+      return decoded;
+    } catch (error: any) {
+      console.log("VERIFY ID TOKEN: ", error);
+      
       throw new Error(error.message);
     }
   }
 }
 
-export const authServiceInstance = Object.freeze(new AuthenticationService());
+export const AuthServiceInstance = Object.freeze(new AuthenticationService());

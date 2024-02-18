@@ -20,12 +20,23 @@ class UserService {
     name: string,
     email: string,
     password: string,
+    organization: string,
     role: string = "user",
-    id?: string,
-    customClaims?: object
+    id?: string
   ) {
     try {
       const userCred = id ? { uid: id } : {};
+      console.log("USER CRED: ", {
+        ...userCred,
+        email: email,
+        emailVerified: false,
+        password: password,
+        displayName: name,
+        disabled: false,
+        organization,
+        role,
+      });
+
       const user = await this.firebaseAuth.createUser({
         ...userCred,
         email: email,
@@ -36,8 +47,9 @@ class UserService {
       });
 
       // set custom claims to user
-      customClaims = customClaims ? { ...customClaims, role } : { role };
+      const customClaims = { role, domain: organization };
       await this.firebaseAuth.setCustomUserClaims(user.uid, customClaims);
+      console.log("USER: ", user);
       return user;
     } catch (error: any) {
       throw new Error(error.message);
@@ -86,7 +98,7 @@ class UserService {
       if (error.errorInfo.code === "auth/user-not-found") {
         return null;
       }
-      
+
       throw new Error(error.message);
     }
   }

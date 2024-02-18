@@ -8,7 +8,6 @@ export * from "./ui/toast";
 export * from "./ui/toaster";
 
 export * from "./dialog/SignInDialog";
-export * from "./dialog/SignUpDialog";
 
 export * from './MapEach';
 export * from "./Logo";

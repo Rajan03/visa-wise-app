@@ -1,7 +1,12 @@
 "use client";
 
-import { EnterIcon } from "@radix-ui/react-icons";
+import { EnterIcon, CircleIcon } from "@radix-ui/react-icons";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components";
+import { useState } from "react";
+import { ENDPOINTS, setLocalStorage } from "@/lib";
+import { ToastState, useShowToast } from "@/hooks";
+import { AuthServiceInstance } from "@/services/client";
 
 // Todo: Handle raise a ticket action
 export function PaidButError({ email, name }: { email: string; name: string }) {
@@ -35,14 +40,52 @@ export function PaidButError({ email, name }: { email: string; name: string }) {
   );
 }
 
-export function SuccessfulPayment({
-  domain,
-  userId,
-}: {
+type SuccessPaymentProps = {
   domain: string;
   userId: string;
-}) {
-  const loginToDashboard = () => {};
+};
+export function SuccessfulPayment({ domain, userId }: SuccessPaymentProps) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const showToast = useShowToast();
+
+  /**
+   * Method calls login endpoint to get the custom token and then signin with the token
+   * to get the user details and then sets local storage with the user token (JWT)
+   * and redirects to the dashboard 
+   */
+  const loginToDashboard = async () => {
+    setLoading(true);
+    try {
+      // TODO: try to do it in one single call
+      // get the custom token from the server
+      const res = await fetch(ENDPOINTS.login, {
+        method: "POST",
+        body: JSON.stringify({ id: userId }),
+      });
+
+      if (res.ok) {
+        // sign in with the token
+        const token = await res.text();
+        const user = await AuthServiceInstance.signInWithToken(token);
+
+        if (user?.user.uid) {
+          // set the user token in local storage
+          const jwt = await user.user.getIdToken();
+          setLocalStorage("user", jwt);
+
+          // redirect to the dashboard
+          const url = `/${domain}`;
+          router.replace(url);
+        }
+      }
+    } catch (error: any) {
+      console.error(error);
+      showToast(ToastState.ERROR, error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="flex-1 flex items-center justify-center">
@@ -58,9 +101,15 @@ export function SuccessfulPayment({
           Please check your email for the subscription details. If you have any
           questions, feel free to contact us.
         </p>
-        <Button onClick={loginToDashboard} className="mt-4">
-          Continue to VisaWise Dashboard
-          <EnterIcon />
+        <Button disabled={loading} onClick={loginToDashboard} className="mt-4">
+          {loading ? (
+            <CircleIcon className="mr-2" />
+          ) : (
+            <>
+              <EnterIcon className="mr-2" />
+              Continue to VisaWise Dashboard
+            </>
+          )}
         </Button>
       </div>
     </div>

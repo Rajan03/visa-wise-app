@@ -5,7 +5,7 @@ import React, { useState } from "react";
 import { Button, Input, Label } from "@/components";
 import { loadStripeInstance } from "@/config/stripe";
 import { ToastState, useShowToast } from "@/hooks";
-import { APP_SUBSCRIPTION_COST, ENPOINTS } from "@/lib";
+import { APP_SUBSCRIPTION_COST, ENDPOINTS } from "@/lib";
 
 enum LoadingState {
   Idle = "Idle",
@@ -45,7 +45,7 @@ export default function Checkout() {
 
       // Create a payment session
       setLoadingState(LoadingState.CheckOutSession);
-      const checkoutSession = await axios.post(ENPOINTS.checkoutSession, {
+      const checkoutSession = await axios.post(ENDPOINTS.checkoutSession, {
         amount,
         email,
         org,

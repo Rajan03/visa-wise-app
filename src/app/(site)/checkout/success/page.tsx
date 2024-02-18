@@ -37,4 +37,3 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   // If the payment was not successful or session was not created in the database
   throw new Error("Payment not successful");
 }
-

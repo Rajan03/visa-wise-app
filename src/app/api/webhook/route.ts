@@ -1,7 +1,7 @@
 import { emailService } from "@/config/emailService";
 import { stripe } from "@/config/stripe";
 import { env } from "@/env";
-import { UserServiceInstance } from "@/services/admin";
+import { DomainServiceInstance, UserServiceInstance } from "@/services/admin";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -62,9 +62,21 @@ async function createUser(
 
   try {
     // Create a new user in firebase auth
-    await UserServiceInstance.createUser(name, email, psw, "admin", userId, {
-      domain: orgName,
-    });
+    // TODO: use cloud function to create domain
+    const [admin, domain] = await Promise.all([
+      await UserServiceInstance.createUser(
+        name,
+        email,
+        psw,
+        orgName,
+        "admin",
+        userId
+      ),
+      await DomainServiceInstance.createDomain(userId, orgName),
+    ]);
+
+    console.log("Admin: ", admin);
+    console.log("Domain: ", domain);
   } catch (error: any) {
     console.log("Error creating user: ", error.message);
     return false;
