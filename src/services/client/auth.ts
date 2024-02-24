@@ -1,5 +1,9 @@
 import FirebaseClient from "@/config/firebase";
-import { Auth, signInWithCustomToken } from "firebase/auth";
+import {
+  Auth,
+  signInWithCustomToken,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 class AuthService {
   private firebaseAuth: Auth;
@@ -9,23 +13,55 @@ class AuthService {
     this.firebaseAuth = firebaseClient.getAuth();
   }
 
+  // SignIn using email and password
+  public async signIn({
+    email,
+    password,
+  }: {
+    email: string;
+    password: string;
+  }) {
+    try {
+      const { user } = await signInWithEmailAndPassword(
+        this.firebaseAuth,
+        email,
+        password
+      );
+      const idToken = await user.getIdToken();
+      const claims = await user.getIdTokenResult();
+      return {
+        idToken,
+        uid: user.uid,
+        name: user.displayName,
+        email: user.email,
+        claims: {
+          domain: claims.claims.domain,
+          role: claims.claims.role,
+        },
+      };
+    } catch (error: any) {
+      console.error(error);
+      throw new Error(error.message);
+    }
+  }
+
   // Get a user from firebase auth using client sdk with given domain custom claim
   public async signInWithToken(token: string) {
     try {
       const { user } = await signInWithCustomToken(this.firebaseAuth, token);
-      
+
       const idToken = await user.getIdToken();
-      const claims = await user.getIdTokenResult();      
-      return { 
-        idToken, 
+      const claims = await user.getIdTokenResult();
+      return {
+        idToken,
         uid: user.uid,
-        name: user.displayName, 
+        name: user.displayName,
         email: user.email,
         claims: {
           domain: claims.claims.domain,
-          role: claims.claims.role
-        } 
-       };
+          role: claims.claims.role,
+        },
+      };
     } catch (error: any) {
       console.error(error);
       throw new Error(error.message);

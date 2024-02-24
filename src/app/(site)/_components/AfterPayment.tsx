@@ -6,6 +6,7 @@ import { AuthServiceInstance } from "@/services/client";
 import { ToastState, useShowToast } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { setCookie } from "@/lib";
+import Link from "next/link";
 
 // Todo: Handle raise a ticket action
 export function PaidButError({ email, name }: { email: string; name: string }) {
@@ -40,24 +41,10 @@ export function PaidButError({ email, name }: { email: string; name: string }) {
 }
 
 type SuccessPaymentProps = {
-  userToken: string;
+  domain: string;
 };
 
-export function SuccessfulPayment({ userToken }: SuccessPaymentProps) {
-  const router = useRouter();
-  const showToast = useShowToast();
-
-  const onContinue = async () => {
-    try {
-      const user = await AuthServiceInstance.signInWithToken(userToken);
-      setCookie("token", user.idToken);
-      router.replace(`/${user.claims.domain}`);
-    } catch (error: any) {
-      console.error("Error: ", error);
-      showToast(ToastState.ERROR, error.message);
-    }
-  };
-
+export function SuccessfulPayment({ domain }: SuccessPaymentProps) {
   return (
     <div className="flex-1 flex items-center justify-center">
       <div className="max-w-md w-full shadow-md border border-gray-100 rounded-md p-8">
@@ -72,9 +59,11 @@ export function SuccessfulPayment({ userToken }: SuccessPaymentProps) {
           Please check your email for the subscription details. If you have any
           questions, feel free to contact us.
         </p>
-        <Button onClick={onContinue} className="mt-4">
-          <EnterIcon className="mr-2" />
-          Continue to VisaWise Dashboard
+        <Button asChild className="mt-4">
+          <Link href={`/${domain}`}>
+            <EnterIcon className="mr-2" />
+            Continue to VisaWise Dashboard
+          </Link>
         </Button>
       </div>
     </div>

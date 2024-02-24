@@ -27,3 +27,11 @@ export enum SessionVerifyError {
   SessionNotFound = "session_404",
   UserNotFound = "user_404",
 }
+
+export type PageProps = React.PropsWithChildren & WithParams;
+
+export interface WithParams {
+  params: {
+    subDomain: string;
+  };
+}

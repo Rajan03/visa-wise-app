@@ -1,9 +1,28 @@
-export default function Dashboard() {
-  
+import { Button, SignInAction } from "@/components";
+import { WithParams } from "@/types";
+import { ArrowRightIcon } from "@radix-ui/react-icons";
+
+export default function DomainLanding({ params: { subDomain } }: WithParams) {
   return (
     <>
-      <div className="flex-1 bg-gray-50 p-10">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+      <div className="flex-1 max-w-3xl mx-auto space-y-8 flex flex-col justify-center items-center">
+        <h1 className="text-3xl sm:text-5xl font-bold text-center">
+          Your Clients, Documents, & Team. Unified. Welcome to{" "}
+          <span className="underline">{subDomain}</span>
+        </h1>
+        <h3 className="text-base sm:text-xl font-medium text-center">
+          {subDomain} is the platform that streamlines and simplifies <br />
+          the visa application process for individuals and businesses.
+        </h3>
+        <div className="flex gap-x-2">
+          <SignInAction>
+            <Button variant={"default"}>
+              <span>Sign In</span>
+              <ArrowRightIcon className="h-4 w-4 ml-2" />
+            </Button>
+          </SignInAction>
+          <Button variant={"ghost"}>Have a doubt ?</Button>
+        </div>
       </div>
     </>
   );

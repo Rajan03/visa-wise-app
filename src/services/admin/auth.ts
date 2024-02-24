@@ -1,8 +1,14 @@
 import { FirebaseAdmin } from "@/config/firebase.admin";
 import { verifyStripeSession } from "@/config/stripe";
-import { SessionVerifyError } from "@/types";
 import { Auth } from "firebase-admin/auth";
 
+type UserWithClaims = {
+  name: string;
+  email: string;
+  verified: boolean;
+  domain?: string;
+  role?: string;
+};
 class AuthenticationService {
   private firebaseAuth: Auth;
 
@@ -33,7 +39,8 @@ class AuthenticationService {
     }
   }
 
-  async verifyUserAndStripeSession(sessionId: string) {
+  // Verifies user and stripe session and returns user details
+  async verifyUserAndStripeSession(sessionId: string): Promise<UserWithClaims> {
     try {
       const stripeSession = await verifyStripeSession(sessionId);
       if (!stripeSession) {
@@ -43,17 +50,17 @@ class AuthenticationService {
       const user = await this.firebaseAuth.getUser(sessionId);
       if (!user) {
         return {
-          name: stripeSession.customer_details?.name,
-          email: stripeSession.customer_details?.email,
-          token: null,
+          name: stripeSession.customer_details?.name as string,
+          email: stripeSession.customer_details?.email as string,
+          verified: false,
         };
       }
 
-      const token = await this.generateCustomToken(user.uid);
       return {
-        name: user.displayName,
-        email: user.email,
-        token,
+        name: user.displayName as string,
+        email: user.email as string,
+        verified: true,
+        ...user.customClaims,
       };
     } catch (error: any) {
       console.log("VERIFY USER AND STRIPE SESSION: ", error);

@@ -10,12 +10,12 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const verifiedSession = await AuthServiceInstance.verifyUserAndStripeSession(
     searchParams.session_id
   );
-  const { email, name, token } = verifiedSession;
+  const { email, name, verified, domain } = verifiedSession;
 
   // If the payment was successful but user was not created in the database
-  if (token) {
-    return <SuccessfulPayment userToken={token} />;
-  } else {
-    return <PaidButError name={name as string} email={email as string} />;
-  }
+  return verified ? (
+    <SuccessfulPayment domain={domain as string} />
+  ) : (
+    <PaidButError name={name} email={email} />
+  );
 }

@@ -79,10 +79,14 @@ class UserService {
     }
   }
 
-  // Get a user from firebase auth using admin sdk with given uid
-  async getUser(uid: string) {
+  // Get a user from firebase auth using admin sdk with given uid and domain
+  async getUserInDomain(uid: string, domain: string) {
     try {
       const user = await this.firebaseAuth.getUser(uid);
+      if (user.customClaims?.domain !== domain) {
+        throw new Error("User does not belong to this domain");
+      }
+      
       return user;
     } catch (error: any) {
       throw new Error(error.message);

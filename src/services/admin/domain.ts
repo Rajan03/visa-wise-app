@@ -23,13 +23,26 @@ class DomainService {
     }
   }
 
-  // Returns the domain document
+  // Returns the domain using the uid
   async getDomain(uid: string) {
     try {
       const domain = await this.firebaseAdmin
         .getDocument<IDomain>("domains", uid)
         .get();
       return domain.data();
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  // Returns the domain using the domain name
+  async getDomainByDomainName(domain: string) {
+    try {
+      const domainRef = await this.firebaseAdmin
+        .getCollection<IDomain>("domains")
+        .where("domain", "==", domain)
+        .get();
+      return domainRef.docs[0].data();
     } catch (error: any) {
       throw new Error(error.message);
     }
