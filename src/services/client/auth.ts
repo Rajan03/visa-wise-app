@@ -1,4 +1,5 @@
 import FirebaseClient from "@/config/firebase";
+import { setCookie } from "@/lib";
 import {
   Auth,
   signInWithCustomToken,
@@ -11,6 +12,18 @@ class AuthService {
   constructor() {
     const firebaseClient = new FirebaseClient();
     this.firebaseAuth = firebaseClient.getAuth();
+  }
+
+  // set cookie for token and refresh token listener
+  public onTokenRefresh() {
+    return this.firebaseAuth.onIdTokenChanged(async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        setCookie("token", token);
+      } else {
+        setCookie("token", "");
+      }
+    });
   }
 
   // SignIn using email and password

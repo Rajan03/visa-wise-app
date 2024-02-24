@@ -1,26 +1,16 @@
 import { PageProps } from "@/types";
 import { AppNavigation } from "@/components";
 import { notFound, redirect } from "next/navigation";
-import {
-  AuthServiceInstance,
-  DomainServiceInstance,
-  UserServiceInstance,
-} from "@/services/admin";
+import { AuthServiceInstance, UserServiceInstance } from "@/services/admin";
 import { cookies } from "next/headers";
 
-export default async function DashboardLayout({
-  children,
-  params: { subDomain },
-}: PageProps) {
-  // Check if Domain exists
-  const domain = await DomainServiceInstance.getDomainByDomainName(subDomain);
-  if (!domain) notFound();
-
+ export default async function DashboardLayout({ children, params }: PageProps) {
+  const { subDomain } = params;
   // Check if user is authenticated
   const cookieStore = cookies();
   const auth = cookieStore.get("token")?.value;
   if (!auth) {
-    redirect(`/${subDomain}/signin`);
+    redirect(`/${subDomain}`);
   }
 
   // Check if user has access to the domain
@@ -40,3 +30,5 @@ export default async function DashboardLayout({
     </>
   );
 }
+
+//  WithLayout(DashboardLayout);

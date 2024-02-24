@@ -45,8 +45,8 @@ export function removeSessionStorage(key: string) {
 
 export function setCookie(name: string, value: string) {
   if (isBrowser()) {
-    const oneDay = 24 * 60 * 60 * 1000;
-    document.cookie = `${name}=${value};path=/;max-age=${oneDay};SameSite=None;Secure`;
+    const oneHour = 60 * 60;
+    document.cookie = `${name}=${value};path=/;max-age=${oneHour};SameSite=None;Secure`;
   }
 }
 

@@ -44,7 +44,7 @@ export function SignInDialog() {
         .then(() => {
           toggle(false);
           showToast(ToastState.SUCCESS, "Logged in successfully");
-          router.push(`/${user.claims.domain}/app`);
+          router.push(`/${user.claims.domain}/dashboard`);
         })
         .catch((error) => {
           throw new Error(error);
