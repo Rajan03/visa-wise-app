@@ -1,8 +1,7 @@
 import { AppNavigation } from "@/components";
-import { getLocalStorage } from "@/lib";
 import { AuthServiceInstance, DomainServiceInstance } from "@/services/admin";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 interface DashboardProps extends React.PropsWithChildren {
   params: {
@@ -13,24 +12,18 @@ export default async function DashboardLayout({
   children,
   params,
 }: DashboardProps) {
-  // Token is stored in local storage not in cookies
-  const cookieStore = cookies();
-  const auth = getLocalStorage("user");
+ const cookieStore = cookies();
+ const auth = cookieStore.get("token")?.value;
+ if (!auth) {
+   redirect("/checkout");
+ }
 
-  console.log(auth);
-  
-  if (!auth) {
-    redirect("/");
-  }
+ const decoded = await AuthServiceInstance.verifyIdToken(auth);
+ const domain = await DomainServiceInstance.getDomain(decoded.uid);
 
-  const decoded = await AuthServiceInstance.verifyIdToken(auth);
-  const domain = await DomainServiceInstance.getDomain(decoded.uid);
-
-  if (params.subDomain !== domain?.domain) {
-    throw new Error("Invalid domain.", {
-      cause: "InvalidDomain",
-    });
-  }
+ if (params.subDomain !== domain?.domain) {
+   notFound();
+ }
 
   return (
     <>

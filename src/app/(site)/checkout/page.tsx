@@ -2,8 +2,8 @@
 
 import axios from "axios";
 import React, { useState } from "react";
-import { Button, Input, Label } from "@/components";
-import { loadStripeInstance } from "@/config/stripe";
+import { Button, Input } from "@/components";
+import { loadInstance } from "@/config/stripe";
 import { ToastState, useShowToast } from "@/hooks";
 import { APP_SUBSCRIPTION_COST, ENDPOINTS } from "@/lib";
 
@@ -38,8 +38,8 @@ export default function Checkout() {
       setLoadingState(LoadingState.LoadingStripe);
 
       // Load Stripe
-      const stripe = await loadStripeInstance();
-      if (!stripe) {
+      const redirectCallback = await loadInstance();
+      if (!redirectCallback) {
         throw new Error("Failed to load stripe");
       }
 
@@ -57,11 +57,9 @@ export default function Checkout() {
 
       // Redirect to checkout
       setLoadingState(LoadingState.Redirecting);
-      const result = await stripe.redirectToCheckout({
-        sessionId: checkoutSession.data,
-      });
+      const result = await redirectCallback(checkoutSession.data);
 
-      if (result.error) {
+      if (result?.error) {
         throw new Error("Failed to redirect to checkout");
       }
     } catch (error: any) {

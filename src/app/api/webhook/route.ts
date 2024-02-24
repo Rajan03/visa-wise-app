@@ -17,6 +17,8 @@ export async function POST(req: NextRequest) {
       env.STRIPE_ENDPOINT_ECRET
     );
   } catch (error: any) {
+    console.log("Error in webhook: ", error.message);
+    
     return new NextResponse(error, {
       status: 400,
     });

@@ -43,6 +43,12 @@ export function removeSessionStorage(key: string) {
   }
 }
 
+export function setCookie(name: string, value: string) {
+  if (isBrowser()) {
+    document.cookie = `${name}=${value};path=/`;
+  }
+}
+
 export function isBrowser() {
   return typeof window !== "undefined";
 }

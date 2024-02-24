@@ -22,3 +22,8 @@ export interface ModalState {
 }
 
 export type NextSearchParams = { [key: string]: string | string[] | undefined }; 
+
+export enum SessionVerifyError {
+  SessionNotFound = "session_404",
+  UserNotFound = "user_404",
+}

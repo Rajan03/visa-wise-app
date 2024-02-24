@@ -10,34 +10,29 @@ export async function POST(req: NextRequest) {
       status: 400,
     });
   }
-
-  // Check if email already exists
+  
   try {
+    // Check if email already exists
     const user = await UserServiceInstance.getUserByEmail(email);
     if (user && !!user.uid) {
       return new NextResponse("Email already exists", {
         status: 400,
       });
     }
-  } catch (error: any) {
-    return new NextResponse(error, {
-      status: 400,
-    });
-  }
 
-  const transformedItem = {
-    price_data: {
-      unit_amount: +amount * 100,
-      currency: "usd",
-      product_data: {
-        name: `subscription`,
-        description: `subscription for ${amount}`,
+    // Create a payment session
+    const transformedItem = {
+      price_data: {
+        unit_amount: +amount * 100,
+        currency: "usd",
+        product_data: {
+          name: `subscription`,
+          description: `subscription for ${amount}`,
+        },
       },
-    },
-    quantity: 1,
-  };
+      quantity: 1,
+    };
 
-  try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: [transformedItem],

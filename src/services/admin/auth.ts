@@ -1,4 +1,6 @@
 import { FirebaseAdmin } from "@/config/firebase.admin";
+import { verifyStripeSession } from "@/config/stripe";
+import { SessionVerifyError } from "@/types";
 import { Auth } from "firebase-admin/auth";
 
 class AuthenticationService {
@@ -10,7 +12,7 @@ class AuthenticationService {
   }
 
   // Generate a IdToken for a user using admin sdk with given uid
-  async generateIdToken(uid: string) {
+  async generateCustomToken(uid: string) {
     try {
       const idToken = await this.firebaseAuth.createCustomToken(uid);
       return idToken;
@@ -26,7 +28,35 @@ class AuthenticationService {
       return decoded;
     } catch (error: any) {
       console.log("VERIFY ID TOKEN: ", error);
-      
+
+      throw new Error(error.message);
+    }
+  }
+
+  async verifyUserAndStripeSession(sessionId: string) {
+    try {
+      const stripeSession = await verifyStripeSession(sessionId);
+      if (!stripeSession) {
+        throw new Error("Stripe session not found");
+      }
+
+      const user = await this.firebaseAuth.getUser(sessionId);
+      if (!user) {
+        return {
+          name: stripeSession.customer_details?.name,
+          email: stripeSession.customer_details?.email,
+          token: null,
+        };
+      }
+
+      const token = await this.generateCustomToken(user.uid);
+      return {
+        name: user.displayName,
+        email: user.email,
+        token,
+      };
+    } catch (error: any) {
+      console.log("VERIFY USER AND STRIPE SESSION: ", error);
       throw new Error(error.message);
     }
   }
