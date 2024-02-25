@@ -1,25 +1,33 @@
+"use client";
+
+import { redirect } from "next/navigation";
 import { PageProps } from "@/types";
 import { AppNavigation } from "@/components";
-import { notFound, redirect } from "next/navigation";
-import { AuthServiceInstance, UserServiceInstance } from "@/services/admin";
-import { cookies } from "next/headers";
+import { ToastState, useAuthUser, useShowToast } from "@/hooks";
+import { useEffect } from "react";
 
- export default async function DashboardLayout({ children, params }: PageProps) {
+export default function DashboardLayout({ children, params }: PageProps) {
   const { subDomain } = params;
-  // Check if user is authenticated
-  const cookieStore = cookies();
-  const auth = cookieStore.get("token")?.value;
-  if (!auth) {
-    redirect(`/${subDomain}`);
-  }
+  const showToast = useShowToast();
+  const { user } = useAuthUser();
+  if (!user) redirect(`/${subDomain}`);
 
-  // Check if user has access to the domain
-  const decodeVerifyToken = await AuthServiceInstance.verifyIdToken(auth);
-  const user = await UserServiceInstance.getUserInDomain(
-    decodeVerifyToken.uid,
-    subDomain
-  );
-  if (!user) notFound();
+  useEffect(() => {
+    const callVerifyDomain = async () => {
+      try {
+        const { verifyDomain } = await import("./action");
+        const token = await user.getIdToken();
+        const authorizedUser = await verifyDomain(token, subDomain);
+        console.log({ authorizedUser });
+      } catch (error: any) {
+        console.log(error.message);
+        showToast(ToastState.ERROR, error.message);
+        redirect(`/${subDomain}`);
+      }
+    };
+    callVerifyDomain();
+  }, [user, subDomain]);
+  
   return (
     <>
       <main className="min-h-screen flex flex-col">
@@ -30,5 +38,3 @@ import { cookies } from "next/headers";
     </>
   );
 }
-
-//  WithLayout(DashboardLayout);

@@ -7,6 +7,7 @@ export * from "./ui/dialog";
 export * from "./ui/toast";
 export * from "./ui/toaster";
 
+export * from "./dialog/Register";
 export * from "./dialog/SignInDialog";
 
 export * from './MapEach';

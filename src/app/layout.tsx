@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 
 import { cn } from "@/lib/utils";
-import { RootProvider } from "@/provider";
+import { AppModals } from "@/components";
 
 import "../styles/globals.css";
 
@@ -18,9 +18,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<React.PropsWithChildren>) {
   return (
     <html lang="en">
       <body
@@ -29,7 +27,8 @@ export default function RootLayout({
           font.className
         )}
       >
-        <RootProvider>{children}</RootProvider>
+        {children}
+        <AppModals />
       </body>
     </html>
   );

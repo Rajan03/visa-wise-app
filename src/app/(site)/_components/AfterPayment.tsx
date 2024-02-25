@@ -2,10 +2,6 @@
 
 import { EnterIcon } from "@radix-ui/react-icons";
 import { Button } from "@/components";
-import { AuthServiceInstance } from "@/services/client";
-import { ToastState, useShowToast } from "@/hooks";
-import { useRouter } from "next/navigation";
-import { setCookie } from "@/lib";
 import Link from "next/link";
 
 // Todo: Handle raise a ticket action

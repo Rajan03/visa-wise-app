@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
     const session = event.data.object as any;
     const email = session.customer_details?.email as string;
     const name = session.customer_details?.name as string;
-    const organization = session.metadata.org as string;
+    const organization = session.metadata.organization as string;
 
     console.log("Session: ", session.id);
     try {
@@ -60,12 +60,12 @@ async function createUser(
   organization: string
 ) {
   const psw = UserServiceInstance.generateRandom(email);
-  const orgName = UserServiceInstance.generateRandom(organization);
+  const orgName = organization + UserServiceInstance.generateRandom(organization);
 
   try {
     // Create a new user in firebase auth
     // TODO: use cloud function to create domain
-    const [admin, domain] = await Promise.all([
+    await Promise.all([
       await UserServiceInstance.createUser(
         name,
         email,
@@ -76,9 +76,6 @@ async function createUser(
       ),
       await DomainServiceInstance.createDomain(userId, orgName),
     ]);
-
-    console.log("Admin: ", admin);
-    console.log("Domain: ", domain);
   } catch (error: any) {
     console.log("Error creating user: ", error.message);
     return false;

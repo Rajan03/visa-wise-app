@@ -1,10 +1,10 @@
-import FirebaseClient from "@/config/firebase";
-import { setCookie } from "@/lib";
-import {
-  Auth,
-  signInWithCustomToken,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import FirebaseClient from "@/config/firebase.client";
+import { Auth, User, signInWithEmailAndPassword } from "firebase/auth";
+
+type SignInProps = {
+  email: string;
+  password: string;
+};
 
 class AuthService {
   private firebaseAuth: Auth;
@@ -14,71 +14,44 @@ class AuthService {
     this.firebaseAuth = firebaseClient.getAuth();
   }
 
-  // set cookie for token and refresh token listener
-  public onTokenRefresh() {
-    return this.firebaseAuth.onIdTokenChanged(async (user) => {
-      if (user) {
-        const token = await user.getIdToken();
-        setCookie("token", token);
-      } else {
-        setCookie("token", "");
-      }
-    });
-  }
-
   // SignIn using email and password
-  public async signIn({
-    email,
-    password,
-  }: {
-    email: string;
-    password: string;
-  }) {
+  public async signIn({ email, password }: SignInProps) {
     try {
       const { user } = await signInWithEmailAndPassword(
         this.firebaseAuth,
         email,
         password
       );
-      const idToken = await user.getIdToken();
-      const claims = await user.getIdTokenResult();
-      return {
-        idToken,
-        uid: user.uid,
-        name: user.displayName,
-        email: user.email,
-        claims: {
-          domain: claims.claims.domain,
-          role: claims.claims.role,
-        },
-      };
+      return user;
     } catch (error: any) {
       console.error(error);
       throw new Error(error.message);
     }
   }
 
-  // Get a user from firebase auth using client sdk with given domain custom claim
-  public async signInWithToken(token: string) {
-    try {
-      const { user } = await signInWithCustomToken(this.firebaseAuth, token);
+  // Get Current logged in user
+  public getCurrentUser() {
+    return this.firebaseAuth.currentUser;
+  }
 
-      const idToken = await user.getIdToken();
-      const claims = await user.getIdTokenResult();
-      return {
-        idToken,
-        uid: user.uid,
-        name: user.displayName,
-        email: user.email,
-        claims: {
-          domain: claims.claims.domain,
-          role: claims.claims.role,
-        },
-      };
-    } catch (error: any) {
-      console.error(error);
-      throw new Error(error.message);
+  // Get Current logged in user token
+  public async getToken() {
+    const user = this.getCurrentUser();
+    if (user) {
+      const token = await user.getIdToken();
+      return token;
     }
+    return null;
+  }
+
+  // SignOut
+  public async signOut() {
+    return await this.firebaseAuth.signOut();
+  }
+
+  // Listen for Auth State Changes
+  public onAuthStateChanged(callback: (user: User | null) => void) {
+    return this.firebaseAuth.onAuthStateChanged(callback);
   }
 }
 

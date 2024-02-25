@@ -3,9 +3,9 @@ import { stripe } from "@/config/stripe";
 import { UserServiceInstance } from "@/services/admin";
 
 export async function POST(req: NextRequest) {
-  const { amount, email, org } = (await req.json()) as any;
+  const { amount, email, organization } = (await req.json()) as any;
 
-  if (!amount || !email || !org) {
+  if (!amount || !email || !organization) {
     return new NextResponse("Organization and Email are required", {
       status: 400,
     });
@@ -37,7 +37,7 @@ export async function POST(req: NextRequest) {
       payment_method_types: ["card"],
       line_items: [transformedItem],
       mode: "payment",
-      metadata: { email, org },
+      metadata: { email, organization },
       customer_email: email,
       success_url: `${req.headers.get(
         "referer"

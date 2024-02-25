@@ -1,14 +1,14 @@
+"use client";
+
 import { Button, SignInAction } from "@/components";
+import { useAuthUser } from "@/hooks";
 import { WithParams } from "@/types";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
-import { cookies } from "next/headers";
 import Link from "next/link";
 
 export default function DomainLanding({ params: { subDomain } }: WithParams) {
-  // Check if user is authenticated
-  const cookieStore = cookies();
-  const auth = cookieStore.get("token")?.value;
-
+  const { user } = useAuthUser();
+  
   return (
     <>
       <div className="flex-1 max-w-3xl mx-auto space-y-8 flex flex-col justify-center items-center">
@@ -21,11 +21,9 @@ export default function DomainLanding({ params: { subDomain } }: WithParams) {
           the visa application process for individuals and businesses.
         </h3>
         <div className="flex gap-x-2">
-          {auth ? (
+          {user ? (
             <Button asChild>
-              <Link href={`/${subDomain}/dashboard`}>
-                Go to Dashboard
-              </Link>
+              <Link href={`/${subDomain}/dashboard`}>Go to Dashboard</Link>
             </Button>
           ) : (
             <SignInAction>

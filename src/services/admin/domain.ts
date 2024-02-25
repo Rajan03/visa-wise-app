@@ -42,6 +42,9 @@ class DomainService {
         .getCollection<IDomain>("domains")
         .where("domain", "==", domain)
         .get();
+      if (domainRef.empty) {
+        return null;
+      }
       return domainRef.docs[0].data();
     } catch (error: any) {
       throw new Error(error.message);

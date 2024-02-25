@@ -1,7 +1,7 @@
 "use client";
 
-import { SignInDialog } from "@/components";
 import { useSignInModal } from "@/hooks";
+import { SignInDialog } from "./SignInDialog";
 
 export function AppModals() {
   const { isOpen: signIn } = useSignInModal();

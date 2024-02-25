@@ -48,6 +48,9 @@ class AuthenticationService {
       }
 
       const user = await this.firebaseAuth.getUser(sessionId);
+      console.log("USER from verifyUserAndStripeSession: ", user.toJSON());
+      
+      const claims = user.customClaims;
       if (!user) {
         return {
           name: stripeSession.customer_details?.name as string,
@@ -60,7 +63,7 @@ class AuthenticationService {
         name: user.displayName as string,
         email: user.email as string,
         verified: true,
-        ...user.customClaims,
+        ...claims,
       };
     } catch (error: any) {
       console.log("VERIFY USER AND STRIPE SESSION: ", error);

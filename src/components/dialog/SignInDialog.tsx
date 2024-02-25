@@ -1,4 +1,8 @@
 "use client";
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+
 import {
   Dialog,
   DialogContent,
@@ -6,17 +10,12 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   Input,
   Label,
   Button,
+  Alert,
 } from "@/components";
-import { ToastState, useShowToast, useSignInModal } from "@/hooks";
-import { setCookie } from "@/lib";
-import { AuthServiceInstance } from "@/services/client";
-import { useRouter } from "next/navigation";
-import React from "react";
-import { useForm } from "react-hook-form";
+import { ToastState, useAuthUser, useShowToast, useSignInModal } from "@/hooks";
 
 type Inputs = {
   email: string;
@@ -26,8 +25,12 @@ type Inputs = {
 // TODO: Improve UI and white label it
 export function SignInDialog() {
   const router = useRouter();
-  const { isOpen, toggle } = useSignInModal();
   const showToast = useShowToast();
+
+  const { isOpen, toggle } = useSignInModal();
+  const { login } = useAuthUser();
+  const [error, setError] = useState("");
+  
   const {
     register,
     handleSubmit,
@@ -38,28 +41,17 @@ export function SignInDialog() {
     const { email, password } = data;
 
     try {
-      const user = await AuthServiceInstance.signIn({ email, password });
-      console.log({ user });
-      setCookieAndRedirect(user.idToken as string)
-        .then(() => {
-          toggle(false);
-          showToast(ToastState.SUCCESS, "Logged in successfully");
-          router.push(`/${user.claims.domain}/dashboard`);
-        })
-        .catch((error) => {
-          throw new Error(error);
-        });
+      const user = await login({ email, password });
+      if (user) {
+        const { claims } = await user.getIdTokenResult();
+        toggle(false);
+        showToast(ToastState.SUCCESS, "Logged in successfully");
+        router.push(`/${claims.domain}/dashboard`);
+      }
     } catch (error: any) {
-      showToast(ToastState.ERROR, error.message);
+      setError(error.message);
     }
   };
-
-  const setCookieAndRedirect = (token: string) => {
-    return new Promise((resolve) => {
-      setCookie("token", token);
-      resolve(true);
-    });
-  }
 
   return (
     <Dialog open={isOpen} onOpenChange={toggle}>
@@ -79,6 +71,9 @@ export function SignInDialog() {
 
           {/* FORM */}
           <div className="flex flex-col gap-3 mt-8 mb-4">
+            {error && <Alert variant={"destructive"}>
+              {error}
+            </Alert>}
             <div className="flex flex-col gap-1">
               <Label htmlFor="email" className="text-left text-gray-500">
                 Email
@@ -124,9 +119,5 @@ export function SignInDialog() {
 export function SignInAction({ children }: React.PropsWithChildren<{}>) {
   const { toggle } = useSignInModal();
 
-  return (
-    <div onClick={() => toggle(true)}>
-      {children}
-    </div>
-  );
+  return <div onClick={() => toggle(true)}>{children}</div>;
 }

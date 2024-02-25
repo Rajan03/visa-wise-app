@@ -1,4 +1,4 @@
-import FirebaseClient from "@/config/firebase";
+import FirebaseClient from "@/config/firebase.client";
 import { Auth } from "firebase/auth";
 
 class UserService {

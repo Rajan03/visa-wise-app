@@ -6,10 +6,13 @@ type SuccessPageProps = {
 };
 
 export default async function SuccessPage({ searchParams }: SuccessPageProps) {
+
   // Verify Stripe seesion and get user
   const verifiedSession = await AuthServiceInstance.verifyUserAndStripeSession(
     searchParams.session_id
   );
+
+  // TODO: Custom Claims are not added instantly so we need to wait for a few seconds
   const { email, name, verified, domain } = verifiedSession;
 
   // If the payment was successful but user was not created in the database

@@ -1,6 +1,7 @@
 import { PageProps } from "@/types";
 import { notFound } from "next/navigation";
 import { DomainServiceInstance } from "@/services/admin";
+import { AuthorizedLayout } from "./_components";
 
 export default async function DashboardLayout({
   children,
@@ -11,10 +12,8 @@ export default async function DashboardLayout({
   if (!domain) notFound();
 
   return (
-    <>
-      <main className="min-h-screen flex flex-col">
-        {children}
-      </main>
-    </>
+    <AuthorizedLayout>
+      <main className="min-h-screen flex flex-col">{children}</main>
+    </AuthorizedLayout>
   );
 }
