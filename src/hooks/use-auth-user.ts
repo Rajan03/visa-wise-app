@@ -8,14 +8,18 @@ type loginProps = {
 };
 
 type AuthUserState = {
+  isLoading: boolean;
   user: User | null;
+  setUser: (user: User | null) => void;
 
   login: (props: loginProps) => Promise<User>;
   logout: () => void;
 };
 
 export const useAuthUser = create<AuthUserState>((set, get) => ({
+  isLoading: true,
   user: null,
+  setUser: (user) => set({ user, isLoading: false }),
 
   login: async ({ email, password }) => {
     try {

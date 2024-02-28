@@ -9,14 +9,14 @@ import { useEffect } from "react";
 export default function DashboardLayout({ children, params }: PageProps) {
   const { subDomain } = params;
   const showToast = useShowToast();
-  const { user } = useAuthUser();
-  if (!user) redirect(`/${subDomain}`);
+  const { user, isLoading } = useAuthUser();
+  if ((isLoading && !user)) redirect(`/${subDomain}`);
 
   useEffect(() => {
     const callVerifyDomain = async () => {
       try {
         const { verifyDomain } = await import("./action");
-        const token = await user.getIdToken();
+        const token = await user!.getIdToken();
         const authorizedUser = await verifyDomain(token, subDomain);
         console.log({ authorizedUser });
       } catch (error: any) {
@@ -26,7 +26,7 @@ export default function DashboardLayout({ children, params }: PageProps) {
       }
     };
     callVerifyDomain();
-  }, [user, subDomain]);
+  }, [user, subDomain, showToast]);
   
   return (
     <>
