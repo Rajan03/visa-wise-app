@@ -13,5 +13,6 @@ export default withAuth(function middleware(req) {}, {
   },
   pages: {
     signIn: "/",
+    newUser: "/onboarding",
   },
 });

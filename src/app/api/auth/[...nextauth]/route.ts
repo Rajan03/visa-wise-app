@@ -46,6 +46,7 @@ const handler = NextAuth({
     // signOut: "/auth/signout",
     // error: "/auth/error",
     // verifyRequest: "/auth/verify-request",
+    newUser: "/onboarding",
     // newUser: null, // If set, new users will be directed here on first sign in
   },
 });

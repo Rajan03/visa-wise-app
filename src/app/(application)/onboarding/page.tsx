@@ -1,5 +1,5 @@
-export default function OnboardingPage({
-  children,
-}: React.PropsWithChildren) {
-  return <div className="flex flex-col min-h-screen">{children}</div>;
+export default function OnboardingPage() {
+  return <div className="flex flex-col min-h-screen">
+    Welcome to onboarding
+    </div>;
 }
