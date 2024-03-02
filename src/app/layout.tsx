@@ -3,8 +3,10 @@ import { Poppins } from "next/font/google";
 
 import { cn } from "@/lib/utils";
 import { AppModals } from "@/components";
+import ClientProvider from "@/hoc/ClientProvider";
 
 import "../styles/globals.css";
+import { AuthProvider } from "@/hoc";
 
 const font = Poppins({
   subsets: ["latin"],
@@ -20,16 +22,20 @@ export default function RootLayout({
   children,
 }: Readonly<React.PropsWithChildren>) {
   return (
-    <html lang="en">
-      <body
-        className={cn(
-          "min-h-screen bg-background font-sans antialiased",
-          font.className
-        )}
-      >
-        {children}
-        <AppModals />
-      </body>
-    </html>
+    <ClientProvider>
+      <html lang="en">
+        <body
+          className={cn(
+            "min-h-screen bg-background font-sans antialiased",
+            font.className
+          )}
+        >
+          <AuthProvider>
+            {children}
+            <AppModals />
+          </AuthProvider>
+        </body>
+      </html>
+    </ClientProvider>
   );
 }

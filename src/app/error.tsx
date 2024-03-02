@@ -18,7 +18,7 @@ export default function ErrorPage({ error }: Props) {
           width={200}
           height={200}
           alt="shape"
-          className="absolute right-0 top-0 h-full object-cover w-auto -z-1 opacity-15"
+          className="absolute right-0 top-0 h-full object-cover w-auto -z-1 opacity-10"
         />
 
         <div className="z-10 flex flex-col items-center justify-center">

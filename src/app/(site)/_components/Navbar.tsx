@@ -1,10 +1,39 @@
 "use client";
-import { Logo } from "@/components";
+import { useState } from "react";
 import { cn } from "@/lib/utils";
-import { useScrollTop } from "@/hooks/use-scroll-top";
+import AuthService from "@/services/auth";
+import { Button, Logo } from "@/components";
+import { ToastState, useShowToast, useScrollTop } from "@/hooks";
+import { useSession } from "next-auth/react";
 
 export function Navbar() {
   const scrolled = useScrollTop();
+  const showToast = useShowToast();
+  const session = useSession();
+  const [loading, setLoading] = useState(false);
+
+  const createAccount = async () => {
+    try {
+      setLoading(true);
+      const res = await AuthService.login();
+      res?.ok && setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      showToast(ToastState.ERROR, "Error logging in");
+    }
+  };
+
+  const logout = async () => {
+    try {
+      setLoading(true);
+      await AuthService.logout();
+      showToast(ToastState.SUCCESS, "Logged out successfully");
+    } catch (error) {
+      showToast(ToastState.ERROR, "Error logging out");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -28,6 +57,16 @@ export function Navbar() {
         <a href="/contact" className="hidden md:block hover:underline">
           Contact
         </a>
+
+        {session.data ? (
+          <Button onClick={logout} disabled={loading}>
+            {loading ? "Loading..." : "Logout"}
+          </Button>
+        ) : (
+          <Button onClick={createAccount} disabled={loading}>
+            {loading ? "Loading..." : "Create Account"}
+          </Button>
+        )}
       </div>
     </div>
   );

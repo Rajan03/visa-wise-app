@@ -1,3 +1,1 @@
-export * from "./user";
-export * from "./domain";
-export * from "./auth";
+export {default} from "./auth";

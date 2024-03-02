@@ -1,7 +1,6 @@
 "use client";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
 
 import {
   Dialog,
@@ -15,7 +14,7 @@ import {
   Button,
   Alert,
 } from "@/components";
-import { ToastState, useAuthUser, useShowToast, useSignInModal } from "@/hooks";
+import { useSignInModal } from "@/hooks";
 
 type Inputs = {
   email: string;
@@ -24,11 +23,7 @@ type Inputs = {
 
 // TODO: Improve UI and white label it
 export function SignInDialog() {
-  const router = useRouter();
-  const showToast = useShowToast();
-
   const { isOpen, toggle } = useSignInModal();
-  const { login } = useAuthUser();
   const [error, setError] = useState("");
   
   const {
@@ -39,18 +34,6 @@ export function SignInDialog() {
 
   const handleSignIn = async (data: Inputs) => {
     const { email, password } = data;
-
-    try {
-      const user = await login({ email, password });
-      if (user) {
-        const { claims } = await user.getIdTokenResult();
-        toggle(false);
-        showToast(ToastState.SUCCESS, "Logged in successfully");
-        router.push(`/${claims.domain}/dashboard`);
-      }
-    } catch (error: any) {
-      setError(error.message);
-    }
   };
 
   return (

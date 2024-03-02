@@ -1,69 +1,28 @@
-import { apps as firebaseApps } from "firebase-admin";
-import { App, initializeApp } from "firebase-admin/app";
-import { getFirestore, type Firestore } from "firebase-admin/firestore";
-import { getAuth, type Auth } from "firebase-admin/auth";
-import { getStorage, type Storage } from "firebase-admin/storage";
-import { converter } from "./firebase.helper";
+import { env } from "@/env";
+import admin from "firebase-admin";
+import { initFirestore } from "@auth/firebase-adapter";
+import type { App } from "firebase-admin/app";
 
-export class FirebaseAdmin {
-  private app: App | undefined;
-  private firestore: Firestore | undefined;
-  private fireAuth: Auth | undefined;
-  private fireStorage: Storage | undefined;
+let initApp: App;
+const creds = admin.credential.cert({
+  projectId: env.FIREBASE_PROJECT_ID,
+  clientEmail: env.FIREBASE_CLIENT_EMAIL,
+  privateKey: env.FIREBASE_PRIVATE_KEY,
+});
 
-  private getApp(): App {
-    if (!firebaseApps.length) {
-      try {
-        this.app = initializeApp();
-      } catch (error) {
-        throw new Error(`Error initializing Firebase app: ${error}`);
-      }
-    }
-    this.app = firebaseApps[0] || this.app;
-    return this.app as App;
-  }
+if (!admin.apps.length) {
+  console.log("Firebase Admin Initialized");
+  initApp = admin.initializeApp({
+    credential: creds,
+  });
+} else {
+  console.log("Firebase Admin already initialized");
+  initApp = admin.apps[0]!;
 
-  public getFirestore(): Firestore {
-    if (!this.firestore) {
-      try {
-        const app = this.getApp();
-        this.firestore = getFirestore(app);
-      } catch (error) {
-        throw new Error(`Error getting Firestore instance: ${error}`);
-      }
-    }
-    return this.firestore;
-  }
-
-  public getAuth(): Auth {
-    if (!this.fireAuth) {
-      try {
-        const app = this.getApp();
-        this.fireAuth = getAuth(app);
-      } catch (error) {
-        throw new Error(`Error getting Auth instance: ${error}`);
-      }
-    }
-    return this.fireAuth;
-  }
-
-  public getStorage(): Storage {
-    if (!this.fireStorage) {
-      try {
-        const app = this.getApp();
-        this.fireStorage = getStorage(app);
-      } catch (error) {
-        throw new Error(`Error getting Storage instance: ${error}`);
-      }
-    }
-    return this.fireStorage;
-  }
-
-  public getCollection<T>(collection: string) {
-    return this.getFirestore().collection(collection).withConverter<T>(converter<T>());
-  }
-
-  public getDocument<T>(collection: string, document: string) {
-    return this.getCollection<T>(collection).doc(document);
-  }
 }
+
+export const firestoreAdmin = initFirestore({
+  credential: creds,
+});
+
+export const fireAuthAdmin = admin.auth(initApp);
