@@ -1,8 +1,9 @@
+import { sendSignInLinkToEmail } from "firebase/auth";
 import { signIn, signOut } from "next-auth/react";
 
 class AuthService {
-    async login() {
-        return signIn("google");
+    async login(email: string) {
+        return // sendSignInLinkToEmail("google");
     }
 
     async logout() {
