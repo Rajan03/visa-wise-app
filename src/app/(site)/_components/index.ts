@@ -1,3 +1,4 @@
-export * from './Navbar'
+export * from './Navbar';
 export * from "./Hero";
-export * from "./PricingCard"
+export * from "./PricingCard";
+export * from "./OnboardingForm";
