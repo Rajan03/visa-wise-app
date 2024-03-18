@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 
 import { cn } from "@/lib/utils";
-import { AppModals } from "@/components";
+import { AppModals, Toaster } from "@/components";
 import { ClientProvider } from "@/hoc";
 
 import "../styles/globals.css";
@@ -31,6 +31,7 @@ export default function RootLayout({
         <ClientProvider>
           {children}
           <AppModals />
+          <Toaster />
         </ClientProvider>
       </body>
     </html>

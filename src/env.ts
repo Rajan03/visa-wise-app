@@ -3,13 +3,12 @@ export const env = {
 
   // GOOGLE
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID as string,
-  GOOGLE_CLIENT_SECRET: process.env
-    .GOOGLE_CLIENT_SECRET as string,
+  GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET as string,
 
   // FIREBASE
   FIREBASE_CLIENT_EMAIL: process.env.FIREBASE_CLIENT_EMAIL as string,
   FIREBASE_PRIVATE_KEY: process.env.FIREBASE_PRIVATE_KEY as string,
-  FIREBASE_PROJECT_ID: process.env.FIREBASE_PROJECT_ID as string,
+  FIREBASE_PROJECT_ID: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID as string,
   FIREBASE_API_KEY: process.env.NEXT_PUBLIC_FIREBASE_API_KEY as string,
   FIREBASE_AUTH_DOMAIN: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN as string,
   FIREBASE_STORAGE_BUCKET: process.env

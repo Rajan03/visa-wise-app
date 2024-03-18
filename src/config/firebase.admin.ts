@@ -18,7 +18,6 @@ if (!admin.apps.length) {
 } else {
   console.log("Firebase Admin already initialized");
   initApp = admin.apps[0]!;
-
 }
 
 export const firestoreAdmin = initFirestore({

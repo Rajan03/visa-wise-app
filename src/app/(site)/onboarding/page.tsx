@@ -1,10 +1,7 @@
 import { OnboardingForm } from "../_components";
 
 export default function OnboardingPage() {
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    console.log("Form submitted");
-  }
+  
   return (
     <div className="flex flex-col items-center justify-center w-full h-full space-y-4 pt-2 container">
       {/* Header */}
