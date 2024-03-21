@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { DomainClient } from "@/services/client";
 import { ToastState, useShowToast } from "@/hooks";
+import { useRouter } from "next/navigation";
 
 type OnboardingInputs = IDomain;
 const obj = {
@@ -22,6 +23,7 @@ const obj = {
 };
 
 export function OnboardingForm() {
+  const router = useRouter();
   const showToast = useShowToast();
   const {
     register,
@@ -33,11 +35,11 @@ export function OnboardingForm() {
   });
 
   const onSubmit = async (data: OnboardingInputs) => {
-    console.log(data);
-    
     try {
       const domain = await DomainClient.createDomain(data);
-      showToast(ToastState.SUCCESS, `Organization ${domain} Created!`);
+      Promise.resolve(
+        showToast(ToastState.SUCCESS, `Organization ${domain} Created!`)
+      ).then(() => router.replace(`/${domain}/dashboard`));
     } catch (error: any) {
       showToast(ToastState.ERROR, error.message);
     }

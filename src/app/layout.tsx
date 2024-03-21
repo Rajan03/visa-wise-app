@@ -3,7 +3,6 @@ import { Poppins } from "next/font/google";
 
 import { cn } from "@/lib/utils";
 import { AppModals, Toaster } from "@/components";
-import { ClientProvider } from "@/hoc";
 
 import "../styles/globals.css";
 
@@ -28,11 +27,9 @@ export default function RootLayout({
           font.className
         )}
       >
-        <ClientProvider>
           {children}
           <AppModals />
           <Toaster />
-        </ClientProvider>
       </body>
     </html>
   );

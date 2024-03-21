@@ -32,6 +32,6 @@ export type PageProps = React.PropsWithChildren & WithParams;
 
 export interface WithParams {
   params: {
-    subDomain: string;
+    domain: string;
   };
 }

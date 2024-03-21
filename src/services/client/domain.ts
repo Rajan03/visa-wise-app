@@ -12,8 +12,8 @@ class ClientDomain {
 
   /**
    * Creates a domain in the database
-   * @param data 
-   * @returns 
+   * @param data
+   * @returns
    */
   async createDomain(data: IDomain) {
     // Check if domain with same name exists
@@ -26,7 +26,24 @@ class ClientDomain {
     }
 
     await setDoc(docRef, data);
-    return docRef.id;
+    return data.domainName;
+  }
+
+  /**
+   * Checks if a domain exists
+   * @param domain
+   * @returns
+   */
+  async validateDomain(domain: string) {
+    const domainDoc = `${AppCollections.domain.collectionName}/${domain}`;
+    const docRef = doc(firestore, domainDoc);
+    const docSnap = await getDoc(docRef);
+
+    if (!docSnap.exists()) {
+      throw new Error("Domain doesn't exists");
+    }
+
+    return docSnap.data() as IDomain;
   }
 }
 
