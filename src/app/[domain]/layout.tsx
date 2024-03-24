@@ -1,13 +1,14 @@
-import { PageProps } from "@/types";
-import { ClientProvider } from "@/hoc";
-import { DomainClient } from "@/services/client";
 import { redirect } from "next/navigation";
+import { PageProps } from "@/types";
+import { ClientProvider, ThemeProvider } from "@/hoc";
+import { DomainClient } from "@/services/client";
 
 export default async function DashboardLayout({ children, params }: PageProps) {
   const { domain } = params;
 
   // Check if domain exists in firestore
-  const existingDomain = await DomainClient.validateDomain(domain); 
+  const existingDomain = await DomainClient.validateDomain(domain);
+  const theme = existingDomain.config?.theme || "light";
 
   // If domain does not exist, redirect to onboarding page
   if (!existingDomain) {
@@ -16,10 +17,8 @@ export default async function DashboardLayout({ children, params }: PageProps) {
 
   // If domain exists, render children
   return (
-    <>
-      <ClientProvider>
-          {children}
-      </ClientProvider>
-    </>
+    <ThemeProvider defaultTheme={theme}>
+      <ClientProvider>{children}</ClientProvider>
+    </ThemeProvider>
   );
 }

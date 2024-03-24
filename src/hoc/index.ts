@@ -1,1 +1,2 @@
-export * from "./ClientProvider"
+export * from "./client-provider"
+export * from "./theme-provider";

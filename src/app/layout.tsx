@@ -27,9 +27,9 @@ export default function RootLayout({
           font.className
         )}
       >
-          {children}
-          <AppModals />
-          <Toaster />
+        {children}
+        <AppModals />
+        <Toaster />
       </body>
     </html>
   );

@@ -22,8 +22,23 @@ export interface IDomain {
   // Tax info
   brn?: string;
   tin?: string;
+
+  config?: IDomainConfig; 
 }
 
+export interface IDomainConfig {
+  logo: string;
+  favicon: string;
+
+  // Theme
+  theme: string;
+
+  // Social
+  facebook: string;
+  twitter: string;
+  linkedin: string;
+  instagram: string;
+}
 export const domainValidation = yup.object().shape({
   orgName: yup.string().required("Organization name is required"),
   domainName: yup.string().required("Domain name is required"),

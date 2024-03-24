@@ -25,7 +25,18 @@ class ClientDomain {
       throw new Error("Domain already exists");
     }
 
-    await setDoc(docRef, data);
+    await setDoc(docRef, {
+      ...data,
+      config: {
+        logo: data.orgLogo,
+        favicon: data.orgLogo,
+        theme: "light",
+        facebook: "",
+        twitter: "",
+        linkedin: "",
+        instagram: ""
+      }
+    });
     return data.domainName;
   }
 
