@@ -34,9 +34,6 @@ export function BasicNavbar({ links }: NavProps) {
         visa<span className="text-primary">wise</span>
       </Link>
 
-      <Button onClick={() => setTheme("green-light")}>G</Button>
-      <Button onClick={() => setTheme("orange-dark")}>O</Button>
-
       {/* Nav links */}
       <ul className="flex items-center gap-x-8">
         <Each
