@@ -93,7 +93,7 @@ export function PaidPlan() {
 
 function OnBoardButton() {
   const redirectOnBoard = () => {
-    console.log("Redirect to onboarding");
+    alert("Redirect to onboarding");
   };
   return (
     <Button onClick={redirectOnBoard} variant="default" className="w-full mb-3">

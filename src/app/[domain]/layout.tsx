@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { PageProps } from "@/types";
-import { ClientProvider, ThemeProvider } from "@/hoc";
+import { ClientProvider, DomainProvider, ThemeProvider } from "@/hoc";
 import { DomainClient } from "@/services/client";
+import { useDomain } from "@/hooks";
 
 export default async function DashboardLayout({ children, params }: PageProps) {
   const { domain } = params;
@@ -16,9 +17,12 @@ export default async function DashboardLayout({ children, params }: PageProps) {
   }
 
   // If domain exists, render children
+  useDomain.setState({ domain: existingDomain });
   return (
     <ThemeProvider defaultTheme={theme}>
-      <ClientProvider>{children}</ClientProvider>
+      <DomainProvider domain={existingDomain}>
+        <ClientProvider>{children}</ClientProvider>
+      </DomainProvider>
     </ThemeProvider>
   );
 }

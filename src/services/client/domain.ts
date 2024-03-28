@@ -28,8 +28,8 @@ class ClientDomain {
     await setDoc(docRef, {
       ...data,
       config: {
-        logo: data.orgLogo,
-        favicon: data.orgLogo,
+        logo: data.orgLogo || "",
+        favicon: data.orgLogo || "",
         theme: "light",
         facebook: "",
         twitter: "",
@@ -37,7 +37,7 @@ class ClientDomain {
         instagram: ""
       }
     });
-    return data.domainName;
+    return docRef.id;
   }
 
   /**

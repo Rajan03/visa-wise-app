@@ -6,6 +6,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { DomainClient } from "@/services/client";
 import { ToastState, useShowToast } from "@/hooks";
 import { useRouter } from "next/navigation";
+import { UserRecord } from "firebase-admin/auth";
 
 type OnboardingInputs = IDomain;
 const obj = {
@@ -22,13 +23,20 @@ const obj = {
   tin: "34567",
 };
 
-export function OnboardingForm() {
+type Props = {
+  createUser: (
+    email: string,
+    psw: string,
+    domain: string
+  ) => Promise<UserRecord | null>;
+};
+export function OnboardingForm({ createUser }: Props) {
   const router = useRouter();
   const showToast = useShowToast();
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<OnboardingInputs>({
     resolver: yupResolver(domainValidation),
     values: obj,
@@ -36,10 +44,14 @@ export function OnboardingForm() {
 
   const onSubmit = async (data: OnboardingInputs) => {
     try {
+      const psw = Math.random().toString(36).slice(-8);
+      console.log({ psw });
+
       const domain = await DomainClient.createDomain(data);
-      Promise.resolve(
-        showToast(ToastState.SUCCESS, `Organization ${domain} Created!`)
-      ).then(() => router.replace(`/${domain}/dashboard`));
+      await createUser(data.ownerEmail, psw, domain);
+
+      showToast(ToastState.SUCCESS, `Organization ${domain} Created!`);
+      router.replace(`/${domain}`);
     } catch (error: any) {
       showToast(ToastState.ERROR, error.message);
     }
@@ -218,8 +230,8 @@ export function OnboardingForm() {
 
         {/* Submit */}
         <div className="col-span-3 mt-8">
-          <Button type="submit" className="w-full">
-            Continue
+          <Button type="submit" className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? "Creating Organization..." : "Create Organization"}
           </Button>
         </div>
       </form>

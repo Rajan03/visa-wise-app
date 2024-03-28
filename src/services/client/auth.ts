@@ -1,5 +1,13 @@
 import { auth } from "@/config/firebase.client";
-import { signInWithCustomToken, type Auth, type UserCredential, sendSignInLinkToEmail } from "firebase/auth";
+import { AppRoles } from "@/types";
+import {
+  type Auth,
+  type UserCredential,
+  createUserWithEmailAndPassword,
+  sendEmailVerification,
+  signInWithCredential,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 
 class ClientAuth {
   firebaseAuth: Auth;
@@ -8,16 +16,18 @@ class ClientAuth {
     this.firebaseAuth = auth;
   }
 
-  async signInWithToken(token: string): Promise<UserCredential> {
-    return await signInWithCustomToken(this.firebaseAuth, token);
-  }
-
-  async signInLink(email: string) {
-    await sendSignInLinkToEmail(this.firebaseAuth, email, {
-      url: "http://localhost:3000/auth/verify",
-      handleCodeInApp: true,
-    });
+  async signInUser(email: string, pasword: string) {
+    try {
+      return await signInWithEmailAndPassword(
+        this.firebaseAuth,
+        email,
+        pasword
+      );
+    } catch (error) {
+      console.error(error);
+      return null;
+    }
   }
 }
 
-export const clientAuth = Object.freeze(new ClientAuth());
+export const AuthClient = Object.freeze(new ClientAuth());

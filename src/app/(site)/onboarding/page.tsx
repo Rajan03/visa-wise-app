@@ -1,7 +1,12 @@
+import { AdminAuth } from "@/services/admin";
 import { OnboardingForm } from "../_components";
+import { AppRoles } from "@/types";
 
 export default function OnboardingPage() {
-  
+  const createUser = async (email: string, psw: string, domain: string) => {
+    "use server";
+   return await AdminAuth.createUser(email, psw, domain, AppRoles.Admin);
+  };
   return (
     <div className="flex flex-col items-center justify-center w-full h-full space-y-4 pt-2 container">
       {/* Header */}
@@ -14,7 +19,7 @@ export default function OnboardingPage() {
       </div>
 
       {/* Form */}
-      <OnboardingForm />
+      <OnboardingForm createUser={createUser} />
     </div>
   );
 }

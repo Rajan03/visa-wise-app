@@ -23,15 +23,15 @@ export interface ModalState {
 
 export type NextSearchParams = { [key: string]: string | string[] | undefined }; 
 
-export enum SessionVerifyError {
-  SessionNotFound = "session_404",
-  UserNotFound = "user_404",
-}
-
 export type PageProps = React.PropsWithChildren & WithParams;
 
 export interface WithParams {
   params: {
     domain: string;
   };
+}
+
+export enum AppRoles {
+  Admin = "admin",
+  User = "user",
 }
