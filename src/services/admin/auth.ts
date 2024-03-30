@@ -36,6 +36,10 @@ class AdminAuth {
       return null;
     }
   }
+
+  async getUser(uid: string) {
+    return (await this.firebaseAuth.getUser(uid));
+  }
 }
 
 export default Object.freeze(new AdminAuth());

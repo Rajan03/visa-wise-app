@@ -15,9 +15,7 @@ export default async function DashboardLayout({ children, params }: PageProps) {
   if (!existingDomain) {
     return redirect("/onboarding");
   }
-
-  // If domain exists, render children
-  useDomain.setState({ domain: existingDomain });
+  
   return (
     <ThemeProvider defaultTheme={theme}>
       <DomainProvider domain={existingDomain}>

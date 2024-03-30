@@ -1,16 +1,17 @@
 import { signIn, signOut } from "next-auth/react";
 
-class AuthService {
-    async login(email: string) {
-        return signIn("credentials", {
-            
-            });
-    }
+class AuthServiceC {
+  async login(email: string, psw: string, domain: string) {
+    return signIn("credentials", {
+      email,
+      password: psw,
+      domain,
+    });
+  }
 
-    async logout() {
-        return signOut();
-    }
+  async logout() {
+    return signOut();
+  }
 }
 
-const authService = new AuthService();
-export default Object.freeze(authService);
+export const AuthService = Object.freeze(new AuthServiceC());

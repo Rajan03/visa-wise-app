@@ -1,5 +1,4 @@
 "use client";
-import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 
 import {
@@ -11,10 +10,10 @@ import {
   DialogTitle,
   Input,
   Label,
-  Button,
-  Alert,
+  Button
 } from "@/components";
-import { useDomain, useSignInModal } from "@/hooks";
+import { ToastState, useDomain, useShowToast, useSignInModal } from "@/hooks";
+import { AuthService } from "@/services/auth";
 
 type Inputs = {
   email: string;
@@ -24,7 +23,8 @@ type Inputs = {
 // TODO: Improve UI and white label it
 export function SignInDialog() {
   const { isOpen, toggle } = useSignInModal();
-  const {domain} = useDomain();
+  const { domain } = useDomain();
+  const showToast = useShowToast();
 
   const {
     register,
@@ -34,8 +34,19 @@ export function SignInDialog() {
 
   const handleSignIn = async (data: Inputs) => {
     const { email, password } = data;
+    try {
+      const signedInUser = await AuthService.login(
+        email,
+        password,
+        domain?.slug!
+      );
+      console.log({ signedInUser });
+    } catch (error: any) {
+      showToast(ToastState.ERROR, error.message)
+    }
   };
 
+  if (!domain) return null;
   return (
     <Dialog open={isOpen} onOpenChange={toggle}>
       <DialogContent>
@@ -85,7 +96,7 @@ export function SignInDialog() {
           {/* FOOTER */}
           <DialogFooter>
             <Button className="w-full flex justify-center" type="submit">
-              Send Verification Link
+              Login to {domain?.orgName}
             </Button>
           </DialogFooter>
         </form>

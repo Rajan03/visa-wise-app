@@ -3,7 +3,7 @@ import NextAuth, { User } from "next-auth";
 import { Adapter } from "next-auth/adapters";
 import CredentialProvider from "next-auth/providers/credentials";
 
-import adminAuthService from "@/services/admin";
+import { AdminAuth } from "@/services/admin";
 import { firestoreAdmin } from "@/config/firebase.admin";
 import { FirestoreAdapter } from "@auth/firebase-adapter";
 import { AuthClient } from "@/services/client";
@@ -15,17 +15,24 @@ const handler = NextAuth({
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" },
+        domain: { label: "Domain", type: "text" },
       },
       authorize: async (credentials) => {
-        const { email, password } = credentials!;
+        const { email, password, domain } = credentials!;
         if (!email || !password) {
           return null;
         }
         const signedInUser = await AuthClient.signInUser(email, password);
+        if (!signedInUser) return null;
 
-        if (!signedInUser) {
-          return null;
-        }
+        const user = await AdminAuth.getUser(signedInUser.user.uid);
+        console.log("User: ", user);
+        console.log({
+          domain,
+          userDomain: user.customClaims?.domain,
+        });
+        
+        if (!user || user.customClaims?.domain !== domain) return null;
 
         const session: User = {
           id: signedInUser.user.uid,
@@ -54,11 +61,11 @@ const handler = NextAuth({
       if (session.user) {
         session.user.id = token.sub as string;
 
-        console.log("Session Callback user", session.user);
-        const fbToken = await adminAuthService.createCustomToken(
-          session.user.id
-        );
+        const fbToken = await AdminAuth.createCustomToken(session.user.id);
+        const user = await AdminAuth.getUser(session.user.id);
         session.firebaseToken = fbToken;
+        session.authUser = user;
+        console.log("Session Callback : ", session);
       }
       return session;
     },

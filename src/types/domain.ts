@@ -3,6 +3,7 @@ import * as yup from "yup";
 export interface IDomain {
   // Org dettails
   orgName: string;
+  slug: string;
   domainName: string;
   orgLogo?: string;
 

@@ -27,6 +27,7 @@ class ClientDomain {
 
     await setDoc(docRef, {
       ...data,
+      slug: data.domainName.toLocaleLowerCase(),
       config: {
         logo: data.orgLogo || "",
         favicon: data.orgLogo || "",
