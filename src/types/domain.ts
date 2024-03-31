@@ -2,8 +2,8 @@ import * as yup from "yup";
 
 export interface IDomain {
   // Org dettails
+  id?: string;
   orgName: string;
-  slug: string;
   domainName: string;
   orgLogo?: string;
 
@@ -40,6 +40,7 @@ export interface IDomainConfig {
   linkedin: string;
   instagram: string;
 }
+
 export const domainValidation = yup.object().shape({
   orgName: yup.string().required("Organization name is required"),
   domainName: yup.string().required("Domain name is required"),
