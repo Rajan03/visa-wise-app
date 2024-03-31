@@ -32,6 +32,7 @@ export * from "./sheet";
 export * from "./skeleton";
 export * from "./slider";
 export * from "./sonner";
+export * from "./state";
 export * from "./switch";
 export * from "./table";
 export * from "./tabs";

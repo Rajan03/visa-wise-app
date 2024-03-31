@@ -5,7 +5,7 @@ import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getFunctions } from "firebase/functions";
-import { getAnalytics } from "firebase/analytics";
+// import { getAnalytics } from "firebase/analytics";
 
 const firebaseConfig = {
   apiKey: env.FIREBASE_API_KEY,
@@ -22,4 +22,4 @@ const initApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
 export const firestore = getFirestore(initApp);
 export const auth = getAuth(initApp);
 export const functions = getFunctions(initApp);
-const analytics = getAnalytics(initApp);
+// const analytics = getAnalytics(initApp);

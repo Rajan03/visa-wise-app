@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ToastState, useShowToast } from "@/hooks";
 import { IDomain, domainValidation } from "@/types";
+import { DomainService } from "@/services";
+import { useRouter } from "next/router";
 
 type OnboardingInputs = Omit<IDomain, "config">;
 type Props = {};
@@ -26,6 +28,7 @@ const formValidator = {
   values: obj,
 };
 export function OnboardingForm({}: Props) {
+  const router = useRouter();
   const showToast = useShowToast();
 
   // FORM Helpers
@@ -36,7 +39,13 @@ export function OnboardingForm({}: Props) {
   // On Form Submit
   const onSubmit = async (data: OnboardingInputs) => {
     try {
+      const domain = await DomainService.createDomain(data);
+      await router.replace(`/${domain}`).then(() => {
+        showToast(ToastState.SUCCESS, `Domain ${domain} created successfully`);
+      });
     } catch (error: any) {
+      console.log("Error creating domain: ", error);
+      
       showToast(ToastState.ERROR, error.message);
     }
   };
@@ -48,7 +57,10 @@ export function OnboardingForm({}: Props) {
         className="grid grid-cols-3 gap-6 w-full py-10"
       >
         {/* ORG DETAILS */}
-        <SectionHeading title="Organization Details" description="Please provide the following details about your organization." />
+        <SectionHeading
+          title="Organization Details"
+          description="Please provide the following details about your organization."
+        />
 
         {/* Row 1 - ORG Name, Domain, Logo */}
         <>
@@ -110,7 +122,10 @@ export function OnboardingForm({}: Props) {
         </>
 
         {/* OWNER CONTACT */}
-        <SectionHeading title="Owner Info" description="Please provide the following details about your organization." />
+        <SectionHeading
+          title="Owner Info"
+          description="Please provide the following details about your organization."
+        />
 
         {/* Row 3 - Name, Email */}
         <>
@@ -138,7 +153,10 @@ export function OnboardingForm({}: Props) {
         </>
 
         {/* POINT OF CONTACT */}
-        <SectionHeading title="Point of contact" description="Please provide the following details about your organization." />
+        <SectionHeading
+          title="Point of contact"
+          description="Please provide the following details about your organization."
+        />
 
         {/* Row 4 - Name, Email */}
         <>
@@ -166,7 +184,10 @@ export function OnboardingForm({}: Props) {
         </>
 
         {/* Tax Info */}
-        <SectionHeading title="Tax Information" description="Please provide the following details about your organization." />
+        <SectionHeading
+          title="Tax Information"
+          description="Please provide the following details about your organization."
+        />
 
         {/* Row 5 - BRN, TIN */}
         <>
@@ -194,6 +215,7 @@ export function OnboardingForm({}: Props) {
 
         {/* Submit */}
         <div className="col-span-3 mt-8">
+          {JSON.stringify(errors)}
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "Creating Organization..." : "Create Organization"}
           </Button>
@@ -203,7 +225,13 @@ export function OnboardingForm({}: Props) {
   );
 }
 
-function SectionHeading({ title, description }: { title: string; description: string }) {
+function SectionHeading({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
   return (
     <div className="col-span-3 border-l-4 pl-4 border-primary mt-8">
       <h3 className="text-md font-bold">{title}</h3>
