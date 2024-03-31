@@ -1,24 +1,17 @@
 import React from "react";
-import { ThemeProvider, SessionProvider } from "@/hoc";
-import { AppNavbar } from "@/components/domain";
 import { useDomain } from "@/hooks";
-import { useRouter } from "next/router";
+import { AppNavbar } from "@/components/domain";
 import { Error, Loading } from "@/components/ui";
+import { ThemeProvider, SessionProvider } from "@/hoc";
+import { FirebaseError } from "firebase/app";
 
 type DomainLayoutProps = React.PropsWithChildren<{}>;
 export function DomainLayout({ children }: DomainLayoutProps) {
-  const router = useRouter();
-  const { domain: domainId } = router.query;
-  const { domain, loading, error, getDomain } = useDomain();
-
-  React.useEffect(() => {
-    getDomain(domainId as string);
-  }, [domainId, getDomain]);
+  const { domain, loading, error } = useDomain();
 
   if (loading) return <Loading />;
-
-  if ((!loading && error) || !domain)
-    return <Error error={error || "Domain not found"} />;
+  if (error) return <Error error={(error as FirebaseError).message} />;
+  if (!domain) return <Error error="Domain not found" />;
 
   return (
     <ThemeProvider defaultTheme={domain.config?.theme || "blue-light"}>
