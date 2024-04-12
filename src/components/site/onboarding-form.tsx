@@ -215,7 +215,6 @@ export function OnboardingForm({}: Props) {
 
         {/* Submit */}
         <div className="col-span-3 mt-8">
-          {JSON.stringify(errors)}
           <Button type="submit" className="w-full" disabled={isSubmitting}>
             {isSubmitting ? "Creating Organization..." : "Create Organization"}
           </Button>
