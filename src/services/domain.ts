@@ -56,6 +56,8 @@ class DomainServiceClass {
 
     return docSnap.data() as IDomain;
   }
+
+  
 }
 
 export const DomainService = Object.freeze(new DomainServiceClass());

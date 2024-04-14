@@ -12,7 +12,13 @@ import {
   Label,
   Button,
 } from "@/components/ui";
-import { ToastState, useDomain, useShowToast, useSignInModal } from "@/hooks";
+import {
+  ToastState,
+  useAuth,
+  useDomain,
+  useShowToast,
+  useSignInModal,
+} from "@/hooks";
 import { AuthService } from "@/services/auth";
 
 type Inputs = {
@@ -25,28 +31,29 @@ export function SignInDialog() {
   const { isOpen, toggle } = useSignInModal();
   const { domain } = useDomain();
   const showToast = useShowToast();
+  const { user } = useAuth();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<Inputs>();
+  const { register, handleSubmit, formState } = useForm<Inputs>();
+  const { errors } = formState;
 
   const handleSignIn = async (data: Inputs) => {
     const { email, password } = data;
+    if (!domain) return;
+
     try {
-      const signedInUser = await AuthService.login(
-        email,
-        password,
-        domain?.domainName
-      );
+      console.log({ domain, email, password });
+      
+      const signedInUser = await AuthService.login(email, password, domain.domainName);
       console.log({ signedInUser });
+      return signedInUser;
     } catch (error: any) {
+      console.log(error);
+      
       showToast(ToastState.ERROR, error.message);
     }
   };
 
-  if (!domain) return null;
+  if (!domain || user) return null;
   return (
     <Dialog open={isOpen} onOpenChange={toggle}>
       <DialogContent>

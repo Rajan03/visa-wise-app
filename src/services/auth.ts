@@ -1,6 +1,6 @@
+import { UserService } from "./user";
 import { auth } from "@/lib/client-firebase";
-import { AppRoles } from "@/types";
-import { createUserWithEmailAndPassword, type Auth } from "firebase/auth";
+import { signInWithCredential, signInWithCustomToken, signInWithEmailAndPassword, type Auth } from "firebase/auth";
 
 class AuthServiceClass {
   private fireauth: Auth;
@@ -9,27 +9,18 @@ class AuthServiceClass {
     this.fireauth = auth;
   }
 
-  async signUp(
-    email: string,
-    password: string,
-    domainName: string,
-    role?: AppRoles = AppRoles.User
-  ) {
+  async login(email: string, password: string, domainId: string) {
     try {
-      const { user } = await createUserWithEmailAndPassword(
-        this.fireauth,
-        email,
-        password
-      );
+      const userDomain = await UserService.userInDomain(email, domainId);
+      if (!userDomain) {
+        throw new Error("User not found");
+      }
 
-      // Create Custom Claims
-      // await
-      return user;
+      return await signInWithEmailAndPassword(this.fireauth, email, password);
     } catch (error: any) {
       throw new Error(error.message);
     }
   }
-  async login(email: string, password: string, domainName: string) {}
 }
 
 export const AuthService = Object.freeze(new AuthServiceClass());

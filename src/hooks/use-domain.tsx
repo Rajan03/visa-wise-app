@@ -1,3 +1,4 @@
+import { FirebaseModels } from "@/config";
 import { firestore } from "@/lib/client-firebase";
 import { IDomain } from "@/types";
 import { doc, type DocumentSnapshot } from "@firebase/firestore";
@@ -13,7 +14,8 @@ export const useDomain = () => {
   const { domain: domainId } = router.query;
 
   // Get domain data from Firestore
-  const domainRef = firestore && doc(firestore, `domain/${domainId}`);
+  const domainRef =
+    firestore && doc(firestore, `${FirebaseModels.domain}/${domainId}`);
   const [domain, loading, error] = useDocument(domainRef);
 
   useEffect(() => {
