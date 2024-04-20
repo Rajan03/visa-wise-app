@@ -7,7 +7,9 @@ export interface DomainUser {
   createdAt: Date;
 }
 
+
 export interface AppUser {
+  uid: string;
   email: string;
   displayName: string;
   domains: DomainInfo[];
@@ -17,5 +19,4 @@ export interface AppUser {
 export interface DomainInfo {
   id: string;
   role: AppRoles;
-  token: string;
 }

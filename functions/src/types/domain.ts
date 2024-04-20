@@ -11,6 +11,7 @@ export interface IDomain {
   country: string;
 
   // Owner Info
+  ownerId?: string;
   ownerName: string;
   ownerEmail: string;
 
@@ -22,7 +23,7 @@ export interface IDomain {
   brn?: string;
   tin?: string;
 
-  config?: IDomainConfig; 
+  config?: IDomainConfig;
 }
 
 export interface IDomainConfig {
@@ -37,4 +38,10 @@ export interface IDomainConfig {
   twitter: string;
   linkedin: string;
   instagram: string;
+
+  // Onboarding
+  onboarding: boolean;
+
+  // Payment
+  session_id?: string;
 }

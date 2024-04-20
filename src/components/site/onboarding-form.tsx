@@ -1,13 +1,15 @@
 import { Button, Input, Label } from "@/components//ui";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { ToastState, useShowToast } from "@/hooks";
+import { ToastState, useDoc, useShowToast } from "@/hooks";
 import { IDomain, domainValidation } from "@/types";
-import { DomainService } from "@/services";
+import { AuthService, DomainService } from "@/services";
 import { useRouter } from "next/router";
+import { runTransaction } from "firebase/firestore";
+import React from "react";
 
 type OnboardingInputs = Omit<IDomain, "config">;
-type Props = {};
+type Props = { domain: IDomain };
 
 const obj = {
   orgName: "VisaWise",
@@ -23,15 +25,19 @@ const obj = {
   tin: "34567",
 };
 
-const formValidator = {
-  resolver: yupResolver(domainValidation),
-  values: obj,
-};
-export function OnboardingForm({}: Props) {
+export function OnboardingForm({ domain }: Props) {
   const router = useRouter();
   const showToast = useShowToast();
 
   // FORM Helpers
+  const formValidator = {
+    resolver: yupResolver(domainValidation),
+    values: {
+      ...obj,
+      domainName: domain.domainName,
+      ownerEmail: domain.ownerEmail,
+    },
+  };
   const hookForm = useForm<OnboardingInputs>(formValidator);
   const { register, handleSubmit, formState } = hookForm;
   const { errors, isSubmitting } = formState;
@@ -39,13 +45,17 @@ export function OnboardingForm({}: Props) {
   // On Form Submit
   const onSubmit = async (data: OnboardingInputs) => {
     try {
-      const domain = await DomainService.createDomain(data);
+      const owner = await AuthService.createOwner(data.ownerEmail);
+      const domain = await DomainService.updateDomain({
+        ...data,
+        ownerId: owner.user.uid,
+      });
       await router.replace(`/${domain}`).then(() => {
         showToast(ToastState.SUCCESS, `Domain ${domain} created successfully`);
       });
     } catch (error: any) {
       console.log("Error creating domain: ", error);
-      
+
       showToast(ToastState.ERROR, error.message);
     }
   };
@@ -81,6 +91,7 @@ export function OnboardingForm({}: Props) {
               error={!!errors.domainName}
               id="domain-name"
               type="text"
+              disabled
               placeholder="eg. digitaldreams.com"
             />
           </div>
@@ -147,6 +158,7 @@ export function OnboardingForm({}: Props) {
               error={!!errors.ownerEmail}
               id="ownerEmail"
               type="email"
+              disabled
               placeholder="eg. example@gmail.com"
             />
           </div>

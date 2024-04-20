@@ -1,4 +1,15 @@
+import React from "react";
 import { Button } from "@/components/ui";
+import { loadStripeInstance } from "@/lib/stripe";
+import { ToastState, useShowToast } from "@/hooks";
+
+enum LoadingState {
+  Idle = "Idle",
+  LoadingStripe = "Loading",
+  CheckOutSession = "Checking out",
+  Redirecting = "Redirecting...",
+  Error = "Error",
+}
 
 export function FreePlan() {
   return (
@@ -91,12 +102,76 @@ export function PaidPlan() {
 }
 
 function OnBoardButton() {
-  const redirectOnBoard = () => {
-    alert("Redirect to onboarding");
+  const showToast = useShowToast();
+  const [loadingState, setLoadingState] = React.useState(LoadingState.Idle);
+  const isLoading =
+    loadingState !== LoadingState.Error && loadingState !== LoadingState.Idle;
+
+  const createSession = async () => {
+    setLoadingState(LoadingState.LoadingStripe);
+
+    try {
+      // Load Stripe
+      const stripe = await loadStripeInstance();
+      if (!stripe) {
+        throw new Error("Failed to load stripe");
+      }
+
+      // Create a new session
+      setLoadingState(LoadingState.CheckOutSession);
+      const response = await fetch("/api/checkout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: 100,
+          email: "rajan@yopmail.com", // TODO: Get email from user
+          domain: "test-domain-2", // TODO: Get domain from user
+        }),
+      });
+
+      const session = await response.json();
+      if (session.error) {
+        throw new Error(session.error.message);
+      }
+      console.log({session});
+      
+
+      // Redirect to checkout
+      setLoadingState(LoadingState.Redirecting);
+      const result = await stripe.redirectToCheckout({
+        sessionId: session.id,
+      });
+
+      if (result.error) {
+        throw new Error("Failed to redirect to checkout");
+      }
+    } catch (error: any) {
+      console.log(error);
+
+      showToast(ToastState.ERROR, error.response?.data || "Failed to checkout");
+      setLoadingState(LoadingState.Error);
+    }
   };
+
   return (
-    <Button onClick={redirectOnBoard} variant="default" className="w-full mb-3">
-      Get Started
+    <Button
+      onClick={createSession}
+      disabled={isLoading}
+      variant="default"
+      className="w-full mb-3"
+    >
+      {isLoading ? <LoadState state={loadingState} /> : "Get Started"}
     </Button>
+  );
+}
+
+function LoadState({ state }: { state: LoadingState }) {
+  return (
+    <div className="flex items-center gap-x-2">
+      <span className="w-4 h-4 border-t-2 border-r-2 rounded-full border-white animate-spin" />
+      <span>{state}</span>
+    </div>
   );
 }

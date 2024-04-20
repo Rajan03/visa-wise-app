@@ -1,6 +1,6 @@
 import { UserService } from "./user";
 import { auth } from "@/lib/client-firebase";
-import { signInWithCredential, signInWithCustomToken, signInWithEmailAndPassword, type Auth } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, type Auth } from "firebase/auth";
 
 class AuthServiceClass {
   private fireauth: Auth;
@@ -9,12 +9,20 @@ class AuthServiceClass {
     this.fireauth = auth;
   }
 
+  async createOwner(email: string) {
+    try {
+      const password = "password";
+      return await createUserWithEmailAndPassword(this.fireauth, email, password);
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
   async login(email: string, password: string, domainId: string) {
     try {
-      const userDomain = await UserService.userInDomain(email, domainId);
-      if (!userDomain) {
-        throw new Error("User not found");
-      }
+      const user = await UserService.userInDomain(email, domainId);
+      if (!user) throw new Error("User not found");
+      console.log("User found: ", user);
 
       return await signInWithEmailAndPassword(this.fireauth, email, password);
     } catch (error: any) {

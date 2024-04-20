@@ -14,3 +14,10 @@ export enum AppRoles {
   Admin = "admin",
   User = "user",
 }
+
+export enum QueryState {
+  LOADING = "loading",
+  ERROR = "error",
+  SUCCESS = "success",
+  IDLE = "idle",
+}
