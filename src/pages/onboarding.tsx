@@ -1,4 +1,5 @@
 import { OnboardingForm } from "@/components/site";
+import { FirebaseModels } from "@/config";
 import { useDoc } from "@/hooks";
 import { verifyStripeSession } from "@/lib/stripe";
 import { IDomain } from "@/types";
@@ -12,7 +13,9 @@ type OnboardingPageProps = {
 // TODO: Implement the subscription plan part maybe using webhook or manually handle it.
 // Component
 export default function OnboardingPage({ domain }: OnboardingPageProps) {
-  const [domainDoc, loading, error] = useDoc(`domains/${domain}`);
+  const [domainDoc, loading, error] = useDoc(
+    `${FirebaseModels.domain}/${domain}`
+  );
 
   // Loading and error states
   if (loading) return <Loading />;

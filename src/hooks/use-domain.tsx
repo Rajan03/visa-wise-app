@@ -1,10 +1,9 @@
 import { FirebaseModels } from "@/config";
-import { firestore } from "@/lib/client-firebase";
 import { IDomain } from "@/types";
-import { doc, type DocumentSnapshot } from "@firebase/firestore";
+import { type DocumentSnapshot } from "@firebase/firestore";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-import { useDocument } from "react-firebase-hooks/firestore";
+import { useDoc } from "./use-firestore";
 
 export const useDomain = () => {
   const [domainData, setDomainData] = useState<IDomain | null>(null);
@@ -14,9 +13,9 @@ export const useDomain = () => {
   const { domain: domainId } = router.query;
 
   // Get domain data from Firestore
-  const domainRef =
-    firestore && doc(firestore, `${FirebaseModels.domain}/${domainId}`);
-  const [domain, loading, error] = useDocument(domainRef);
+  const [domain, loading, error] = useDoc(
+    `${FirebaseModels.domain}/${domainId}`
+  );
 
   useEffect(() => {
     if (domain && domain.exists()) {
