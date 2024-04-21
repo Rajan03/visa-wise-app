@@ -26,16 +26,6 @@ async function Post(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
     return res.status(400).json({ message: "Invalid request" });
   }
 
-  // Check if email already exists
-  try {
-    const isUser = await UserService.userExists(email);
-    if (isUser) {
-      return res.status(400).json({ message: "User already exists" });
-    }
-  } catch (error: any) {
-    return res.status(400).json({ message: error.message });
-  }
-
   const transformedItem = {
     price_data: {
       unit_amount: +amount * 100,

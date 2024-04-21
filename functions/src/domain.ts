@@ -1,39 +1,42 @@
 // Firebase
 import * as admin from "firebase-admin";
 import { QueryDocumentSnapshot } from "firebase-admin/firestore";
-import { FirestoreEvent } from "firebase-functions/v2/firestore";
+import { Change, FirestoreEvent } from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
 
 // Types
 import { AppRoles, IDomain } from "./types";
 
 // Event type
-type EventType = FirestoreEvent<QueryDocumentSnapshot | undefined>;
+type EventType = FirestoreEvent<
+  Change<QueryDocumentSnapshot> | undefined,
+  { domainId: string }
+>;
 type OwnerType = {
   email: string;
   name: string;
 };
 
-export const onCreate = (event: EventType) => {
+export const onUpdate = (event: EventType) => {
   if (!event || !event.data) return;
 
-  const domainSnap = event.data;
+  const domainSnap = event.data.after;
   const domain = domainSnap.data() as IDomain;
-  logger.info("Domain created", domain);
+  logger.info("Domain updated", domain);
 
-  // Add user to domain -> users collection
-  addDomainUser(domainSnap.id, domain.ownerId!, {
-    email: domain.ownerEmail,
-    name: domain.ownerName,
-  }).then(() =>
-    logger.info("User added to domain users")
-  );
+  if (domain.ownerId) {
+    // Add user to domain -> users collection
+    addDomainUser(domainSnap.id, domain.ownerId!, {
+      email: domain.ownerEmail,
+      name: domain.ownerName,
+    }).then(() => logger.info("User added to domain users"));
 
-  // Add user to users collection
-  addUserToApp(domainSnap.id, domain.ownerId!, {
-    email: domain.ownerEmail,
-    name: domain.ownerName,
-  }).then(() => logger.info("User added to users collection"));
+    // Add user to users collection
+    addUserToApp(domainSnap.id, domain.ownerId!, {
+      email: domain.ownerEmail,
+      name: domain.ownerName,
+    }).then(() => logger.info("User added to users collection"));
+  }
 };
 
 // Add user in domain
@@ -62,12 +65,10 @@ function addUserToApp(domain: string, ownerId: string, owner: OwnerType) {
       uid: ownerId,
       email: owner.email,
       displayName: owner.name,
-      domains: [
-        {
-          id: domain,
-          role: AppRoles.Owner,
-        },
-      ],
+      domain: {
+        id: domain,
+        role: AppRoles.Owner,
+      },
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 }
