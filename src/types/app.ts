@@ -5,6 +5,13 @@ export interface ModalState {
   toggle: (state: boolean) => void;
 }
 
+export interface MenuState {
+  isOpen: boolean;
+  open: () => void;
+  close: () => void;
+  toggle: (state: boolean) => void;
+}
+
 export type NextSearchParams = { [key: string]: string | string[] | undefined }; 
 export interface WithParams {
   params: { domain: string };
@@ -13,11 +20,4 @@ export interface WithParams {
 export enum AppRoles {
   Admin = "admin",
   User = "user",
-}
-
-export enum QueryState {
-  LOADING = "loading",
-  ERROR = "error",
-  SUCCESS = "success",
-  IDLE = "idle",
 }

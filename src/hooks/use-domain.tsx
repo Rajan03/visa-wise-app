@@ -6,8 +6,6 @@ import { useEffect, useState } from "react";
 import { useDoc } from "./use-firestore";
 
 export const useDomain = () => {
-  const [domainData, setDomainData] = useState<IDomain | null>(null);
-
   // Get domainId from router
   const router = useRouter();
   const { domain: domainId } = router.query;
@@ -16,12 +14,6 @@ export const useDomain = () => {
   const [domain, loading, error] = useDoc(
     `${FirebaseModels.domain}/${domainId}`
   );
-
-  useEffect(() => {
-    if (domain && domain.exists()) {
-      setDomainData(domain.data() as IDomain);
-    }
-  }, [domain]);
 
   // If domainId is not a string, return null
   if (!domainId || typeof domainId !== "string") {
@@ -43,7 +35,7 @@ export const useDomain = () => {
 
   // If domain exists, return domain data
   return {
-    domain: domainData,
+    domain: domain.data() as IDomain,
     domainDoc: domain as DocumentSnapshot<IDomain>,
     loading,
     error,
