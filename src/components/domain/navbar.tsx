@@ -1,11 +1,13 @@
 import { cn } from "@/lib/utils";
-import { useScrollTop } from "@/hooks";
+import { useAuth, useScrollTop, useSignInModal } from "@/hooks";
 import { Button } from "@/components/ui";
 import { Logo } from "@/components/site";
 import { LogIn } from "lucide-react";
 
 export function AppNavbar() {
   const scrolled = useScrollTop();
+  const { toggle } = useSignInModal();
+  const { user, loading } = useAuth();
 
   return (
     <div
@@ -17,10 +19,17 @@ export function AppNavbar() {
       <Logo />
 
       <div className="md:ml-auto flex items-center gap-x-8">
-        <Button variant={"ghost"} className="space-x-1 flex items-center">
-          <LogIn size={16} />
-          <span className="hidden md:inline text-sm">Log In</span>
-        </Button>
+        {!user && (
+          <Button
+            variant={"ghost"}
+            onClick={() => toggle(true)}
+            className="space-x-1 flex items-center"
+            disabled={!!user || loading}
+          >
+            <LogIn size={16} />
+            <span className="hidden md:inline text-sm">Log In</span>
+          </Button>
+        )}
       </div>
     </div>
   );

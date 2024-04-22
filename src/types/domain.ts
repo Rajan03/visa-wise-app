@@ -13,6 +13,7 @@ export interface IDomain {
   country: string;
 
   // Owner Info
+  ownerId?: string;
   ownerName: string;
   ownerEmail: string;
 
@@ -39,6 +40,13 @@ export interface IDomainConfig {
   twitter: string;
   linkedin: string;
   instagram: string;
+
+  // Onboarding
+  onboarding: boolean;
+
+  // Payment
+  session_id?: string;
+  
 }
 
 export const domainValidation = yup.object().shape({

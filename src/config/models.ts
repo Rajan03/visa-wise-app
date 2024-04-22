@@ -1,3 +1,3 @@
 export const FirebaseModels = {
-    domain: "domain",
+    domain: "domains",
 }

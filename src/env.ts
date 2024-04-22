@@ -21,8 +21,8 @@ export const env = {
 
   // STRIPE
   VERIFY_EMAIL_URL: process.env.NEXT_PUBLIC_VERIFY_EMAIL_REDIRECT_URL as string,
-  STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY as string,
-  STRIPE_ENDPOINT_ECRET: process.env
+  STRIPE_SECRET_KEY: process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string,
+  STRIPE_ENDPOINT_SECRET: process.env
     .NEXT_PUBLIC_STRIPE_ENDPOINT_SECRET as string,
   STRIPE_PUBLISHABLE_KEY: process.env
     .NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY as string,
