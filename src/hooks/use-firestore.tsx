@@ -1,13 +1,13 @@
 import { firestore } from "@/lib/client-firebase";
 import { doc } from "firebase/firestore";
-import { useDocument } from "react-firebase-hooks/firestore";
+import { DocumentHook, useDocument } from "react-firebase-hooks/firestore";
 
-export const useDoc = (path: string) => {
+export function useDoc<T>(path: string) {
     const docSnap = useDocument(doc(firestore, path), {
-        snapshotListenOptions: {
-            includeMetadataChanges: true,
-        }
+      snapshotListenOptions: {
+        includeMetadataChanges: true,
+      },
     });
 
-    return docSnap;
+    return docSnap as DocumentHook<T>;
 }

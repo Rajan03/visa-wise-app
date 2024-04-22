@@ -1,35 +1,56 @@
-import { cn } from "@/lib/utils";
-import { useAuth, useScrollTop, useSignInModal } from "@/hooks";
-import { Button } from "@/components/ui";
-import { Logo } from "@/components/site";
 import { LogIn } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { AppRoles, AuthUser } from "@/types";
+import { Logo } from "@/components/site";
+import { useScrollTop, useSignInModal } from "@/hooks";
+import { AdminProfileMenu, UserProfileMenu } from "./profile-menu";
+import { Button, Avatar, AvatarImage, AvatarFallback } from "@/components/ui";
 
-export function AppNavbar() {
+export function AppNavbar({ user }: { user: AuthUser | null }) {
   const scrolled = useScrollTop();
   const { toggle } = useSignInModal();
-  const { user, loading } = useAuth();
+
+  const userAvtar = user && (
+    <div className="flex items-center gap-x-2 cursor-pointer">
+      <Avatar className="cursor-pointer">
+        <AvatarImage src={user.photoURL || ""} />
+        <AvatarFallback>{user.displayName?.charAt(0) || "U"}</AvatarFallback>
+      </Avatar>
+      <span className="hidden md:inline text-sm font-medium">
+        {user.displayName || "Unknown"}
+      </span>
+    </div>
+  );
 
   return (
     <div
       className={cn(
-        "z-50 bg-background h-20 fixed top-0 flex items-center w-full px-6 py-4 shadow",
+        "z-50 bg-background h-16 fixed top-0 w-full px-6 py-4 shadow",
         scrolled && "border-b shadow-md transition-all duration-300 ease-in-out"
       )}
     >
-      <Logo />
+      <div className="w-full flex items-center container mx-auto">
+        <Logo />
 
-      <div className="md:ml-auto flex items-center gap-x-8">
-        {!user && (
-          <Button
-            variant={"ghost"}
-            onClick={() => toggle(true)}
-            className="space-x-1 flex items-center"
-            disabled={!!user || loading}
-          >
-            <LogIn size={16} />
-            <span className="hidden md:inline text-sm">Log In</span>
-          </Button>
-        )}
+        <div className="md:ml-auto flex items-center gap-x-8">
+          {!user && (
+            <Button
+              variant={"ghost"}
+              onClick={() => toggle(true)}
+              className="space-x-1 flex items-center"
+            >
+              <LogIn size={16} />
+              <span className="hidden md:inline text-sm">Log In</span>
+            </Button>
+          )}
+
+          {user && user.role !== AppRoles.User && (
+            <AdminProfileMenu>{userAvtar}</AdminProfileMenu>
+          )}
+          {user && user.role === AppRoles.User && (
+            <UserProfileMenu>{userAvtar}</UserProfileMenu>
+          )}
+        </div>
       </div>
     </div>
   );

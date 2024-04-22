@@ -29,6 +29,14 @@ class AuthServiceClass {
       throw new Error(error.message);
     }
   }
+
+  async logout() {
+    try {
+      return await this.fireauth.signOut();
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }
 
 export const AuthService = Object.freeze(new AuthServiceClass());

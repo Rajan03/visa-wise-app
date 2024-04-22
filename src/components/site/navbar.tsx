@@ -9,7 +9,7 @@ export function SiteNavbar() {
   return (
     <div
       className={cn(
-        "z-50 bg-background h-20 fixed top-0 flex items-center w-full px-6 py-4 shadow",
+        "z-50 bg-background h-16 fixed top-0 flex items-center w-full px-6 py-4 shadow",
         scrolled && "border-b shadow-md transition-all duration-300 ease-in-out"
       )}
     >

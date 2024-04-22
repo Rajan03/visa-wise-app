@@ -15,9 +15,7 @@ class DomainServiceClass {
     const docRef = doc(firestore, domainDoc);
     await updateDoc(docRef, {
       ...data,
-      config: {
-        onboarding: true,
-      },
+      "config.onboarding": true,
     });
     return docRef.id;
   }
