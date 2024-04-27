@@ -27,11 +27,11 @@ type NavLinkProps = {
 };
 function NavLink({href,title,count, Icon}: NavLinkProps) {
   return (
-    <DomainLink className="text-xs hover:text-primary flex items-center" href={href}>
+    <DomainLink className="text-xs text-foreground hover:text-primary flex items-center" href={href}>
       <Icon className="w-4 h-4" strokeWidth={'1px'} />
       <span className="ml-1.5">{title}</span>
       {count && (
-        <span className="ml-1.5 bg-primary text-white text-[9px]  px-1 rounded">
+        <span className="ml-1.5 bg-primary text-white text-[9px] px-1 rounded">
           {count}
         </span>
       )}
