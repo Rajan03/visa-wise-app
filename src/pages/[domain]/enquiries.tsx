@@ -272,7 +272,7 @@ function CollapseRow(enquiry: IEnquiry) {
             </Table.Cell>
             <Table.Cell>
               <EnquiryMenu id={enquiry.id}>
-                <Button variant="ghost" key={enquiry.id}>
+                <Button variant="ghost" key={enquiry.id} className="p-1 h-max">
                   <Icons.More
                     className="w-4 h-4 text-primary"
                     strokeWidth={"1.5px"}
