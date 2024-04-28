@@ -1,8 +1,5 @@
-import {
-  AssignToTag,
-  EnquiryMenu,
-  EnquiryStatusTag,
-} from "@/components/domain";
+import { AssignToTag, EnquiryStatusTag } from "@/components/domain";
+import { EnquiryMenu } from "@/components/menus";
 import { Badge, Button, Collapse, Table } from "@/components/ui";
 import { Icons } from "@/config";
 import { DashboardLayout, DomainLayout } from "@/layouts";

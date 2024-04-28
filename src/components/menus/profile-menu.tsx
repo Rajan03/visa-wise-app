@@ -1,9 +1,8 @@
 import { Dropdown } from "@/components/ui";
 import { DomainLink } from "@/hoc";
-import { useDomain, useProfileMenu } from "@/hooks";
+import { useProfileMenu } from "@/hooks";
 import { AuthService } from "@/services";
 import { LogOut } from "lucide-react";
-import Link from "next/link";
 
 type ProfileMenuProps = React.PropsWithChildren<{}>;
 export const AdminProfileMenu = (props: ProfileMenuProps) => {
@@ -16,6 +15,7 @@ export const AdminProfileMenu = (props: ProfileMenuProps) => {
       console.error(error);
     }
   };
+
   return (
     <>
       <Dropdown.Root open={isOpen} onOpenChange={toggle}>

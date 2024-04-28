@@ -1,5 +1,5 @@
 import { EnquiryStatus } from "@/types";
-import { Badge } from "../ui";
+import { Badge } from "../../ui";
 import { cn } from "@/lib/utils";
 
 export function EnquiryStatusTag({ status }: { status: EnquiryStatus }) {

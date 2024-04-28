@@ -1,4 +1,4 @@
-import { Badge } from "../ui";
+import { Badge } from "../../ui";
 
 export function AssignToTag({ assignedTo }: { assignedTo: string | undefined }) {
 

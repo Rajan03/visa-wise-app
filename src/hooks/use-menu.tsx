@@ -9,14 +9,7 @@ export const useProfileMenu = create<MenuState>((set) => ({
 }));
 
 export const useEnquiryMenu = create<MenuStateWithId>((set, get) => ({
-  isOpen: [],
-  open: (id) => set({ isOpen: [...get().isOpen, id] }),
-  close: (id) => set({ isOpen: get().isOpen.filter((i) => id !== i) }),
-  toggle: (id, state) => {
-    if (state) {
-      set({ isOpen: [...get().isOpen, id] });
-    } else {
-      set({ isOpen: get().isOpen.filter((i) => id !== i) });
-    }
-  }
+  openId: null,
+  open: (id) => set({ openId: id }),
+  close: () => set({ openId: null }),
 }));

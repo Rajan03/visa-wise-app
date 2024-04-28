@@ -1,15 +1,24 @@
 import { Dropdown } from "@/components/ui";
 import { Icons } from "@/config";
-import { useEnquiryMenu } from "@/hooks";
+import { useEnqSidebar, useEnquiryMenu } from "@/hooks";
 
 type EnquiryMenuProps = React.PropsWithChildren<{ id: string }>;
 export const EnquiryMenu = (props: EnquiryMenuProps) => {
-  const { isOpen, toggle } = useEnquiryMenu();
-  const idIsOpen = isOpen.includes(props.id);
+  const { openId, open, close } = useEnquiryMenu();
+  const {open: openDetails} = useEnqSidebar()
+  const idIsOpen = Boolean(openId === props.id);
+
+  const toggle = (state: boolean) => {
+    if (state) {
+      open(props.id);
+    } else {
+      close();
+    }
+  };
 
   return (
     <>
-      <Dropdown.Root open={idIsOpen} onOpenChange={(s) => toggle(props.id, s)}>
+      <Dropdown.Root open={idIsOpen} onOpenChange={toggle}>
         <Dropdown.Trigger asChild>{props.children}</Dropdown.Trigger>
         <Dropdown.Content className="w-48">
           <Dropdown.Item className="font-semibold flex gap-1">
@@ -17,7 +26,9 @@ export const EnquiryMenu = (props: EnquiryMenuProps) => {
             <p>Convert to Case</p>
           </Dropdown.Item>
           <Dropdown.Separator />
-          <Dropdown.Item>Detailed Enquiry</Dropdown.Item>
+          <Dropdown.Item onClick={() => openDetails(props.id)}>
+            Detailed Enquiry
+          </Dropdown.Item>
           <Dropdown.Item>Assign Team Member</Dropdown.Item>
           <Dropdown.Item>Chat History</Dropdown.Item>
           <Dropdown.Item>Mark Irrelevant</Dropdown.Item>
