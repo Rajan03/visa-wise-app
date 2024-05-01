@@ -86,7 +86,7 @@ export function EnquirySidebar() {
   if (!idIsOpen) return null;
   return (
     <Sheet.Root open={idIsOpen} onOpenChange={toggle}>
-      <Sheet.Content className="w-[32rem] flex flex-col">
+      <Sheet.Content className="w-[36rem] flex flex-col">
         <Sheet.Header>
           <Sheet.Title className="space-y-0.5">
             <p className="text-foreground">

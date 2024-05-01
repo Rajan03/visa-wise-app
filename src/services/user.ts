@@ -1,6 +1,14 @@
 import { firestore } from "@/lib/client-firebase";
 import { AppUser } from "@/types";
-import { Firestore, doc, getDoc } from "firebase/firestore";
+import {
+  Firestore,
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 
 class UserServiceClass {
   private firestore: Firestore;
@@ -12,23 +20,24 @@ class UserServiceClass {
   // Check if user has access to domain
   async userInDomain(email: string, domainId: string) {
     try {
-        // Find user by email
-        const userDoc = `users/${email}`;
-        const docRef = doc(this.firestore, userDoc);
-        const docSnap = await getDoc(docRef);
+      // Find user by email
+      const docQuery = query(
+        collection(this.firestore, `users`),
+        where("email", "==", email)
+      );
+      const docSnap = await getDocs(docQuery);
+      if (docSnap.empty) {
+        throw new Error("User not found");
+      }
 
-        if (!docSnap.exists()) {
-          throw new Error("User not found");
-        }
+      const userData = docSnap.docs[0].data() as AppUser;
+      console.log({ userData, domainId });
+      const userDomain = userData.domain.id === domainId;
+      if (!userDomain) {
+        throw new Error("User not in domain");
+      }
 
-        const userData = docSnap.data() as AppUser;
-        console.log({ userData, domainId });
-        const userDomain = userData.domains.find((domain) => domain.id === domainId);
-        if (!userDomain) {
-          throw new Error("User not in domain");
-        }
-
-        return userData;
+      return userData;
     } catch (error: any) {
       throw new Error(error.message);
     }
