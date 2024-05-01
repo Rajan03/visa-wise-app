@@ -12,6 +12,18 @@ export interface MenuState {
   toggle: (state: boolean) => void;
 }
 
+export interface MenuStateWithId {
+  openId: string | null;
+  open: (id: string) => void;
+  close: () => void;
+}
+
+export interface SidebarStateWithId {
+  openId: string | null;
+  open: (id: string) => void;
+  close: () => void;
+}
+
 export type NextSearchParams = { [key: string]: string | string[] | undefined }; 
 export interface WithParams {
   params: { domain: string };

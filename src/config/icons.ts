@@ -1,4 +1,4 @@
-import { BriefcaseBusiness, File, Layers3, LayoutDashboard, LucideIcon, Scroll, SquareCheck, Users2 } from "lucide-react";
+import { BriefcaseBusiness, CopyCheck, EllipsisVertical, File, Layers3, LayoutDashboard, LucideIcon, MessageSquareCode, MessageSquareReply, PlusCircle, Scroll, SquareCheck, Users2 } from "lucide-react";
 
 export const Icons = {
     dashboard: LayoutDashboard,
@@ -8,6 +8,11 @@ export const Icons = {
     cases: BriefcaseBusiness,
     tasks: SquareCheck,
     "file-manager": File,
+    Add: PlusCircle,
+    More: EllipsisVertical,
+    Chat: MessageSquareCode,
+    Reply: MessageSquareReply,
+    Convert: CopyCheck,
 }
 
 export type IconType = LucideIcon;

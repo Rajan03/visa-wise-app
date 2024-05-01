@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { AppRoles, AuthUser } from "@/types";
 import { Logo } from "@/components/site";
 import { useScrollTop, useSignInModal } from "@/hooks";
-import { AdminProfileMenu, UserProfileMenu } from "./profile-menu";
+import { AdminProfileMenu, UserProfileMenu } from "@/components/menus";
 import { Button, Avatar, AvatarImage, AvatarFallback } from "@/components/ui";
 
 export function AppNavbar({ user }: { user: AuthUser | null }) {
