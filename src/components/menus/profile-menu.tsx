@@ -35,6 +35,9 @@ export const AdminProfileMenu = (props: ProfileMenuProps) => {
           <Dropdown.Item>Preferences</Dropdown.Item>
           <Dropdown.Item>Notifications</Dropdown.Item>
           <Dropdown.Item>Security</Dropdown.Item>
+          <Dropdown.Item>
+            <DomainLink href="/profile/app-settings">App Settings</DomainLink>
+            </Dropdown.Item>
           <Dropdown.Separator />
           <Dropdown.Item onClick={onLogout} className="flex items-center gap-1">
             <LogOut size={14} className="mt-[3px]" />

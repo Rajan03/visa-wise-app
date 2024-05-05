@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks";
 import { Loading } from "@/components/ui";
 import { Montserrat } from "next/font/google";
 import { AppSidebarProvider } from "@/components/sidebars";
+import { AuthUser } from "@/types";
 
 const font = Montserrat({
   display: "swap",
@@ -15,9 +16,12 @@ const font = Montserrat({
 
 type DomainLayoutProps = React.PropsWithChildren<{}>;
 export function DomainLayout({ children }: DomainLayoutProps) {
-  const { user, loading } = useAuth();
+  const { user, loading, prevUser } = useAuth();
   
-  if (loading) return <Loading />;
+  React.useEffect(() => {
+    console.log("prevUser", prevUser); 
+  }, [prevUser]);
+  if (loading && !prevUser) return <Loading />;
 
   return (
     <DomainProvider>
